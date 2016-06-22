@@ -16,20 +16,55 @@
     <nav class="col-sm-6 text-center">
 <p><a href="index.html">Home</a></p>
       <p><a href="work.html"> Recent Work</a></p>
-      <p><a href="joshua_levy_cv.pdf"> CV</a></p>
+      <p><a href="shortCV.html"> CV</a></p>
       <p><a href="contact.html"> Contact </a></p>   
 
 </nav>
   </div>
 <hr>
  </header>
-<section class="container">
-<p class="col-sm-6 text-center">
+<div class="row">
+<p align="center">
 
-I can be reached at ....
+Contact Details:<br>
+Email: joshua.levy@u.northwestern.edu<br>
+Address: 2145 Sheridan Road<br>
+Evanston, IL 60208-3125<br>
+Phone: (847) 467-5760<br>
+
 </p>
 
-</section>
+</div>
+<div class="row">
+<p align="center">
+<script language="JavaScript 1.2" type="text/javascript">
+months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; 
+var d=new Date();
+var weekday=new Array(7);
+weekday[0]="Sunday";
+weekday[1]="Monday";
+weekday[2]="Tuesday";
+weekday[3]="Wednesday";
+weekday[4]="Thursday";
+weekday[5]="Friday";
+weekday[6]="Saturday";
+
+var d = new Date();
+(d.getFullYear());
+
+
+var theDate = new Date(document.lastModified); 
+theDate.setTime((theDate.getTime()+(60*60)) ) 
+with (theDate) { 
+document.write("Last Modified: "+weekday[getDay()]+' '+getDate()+' '+months[getMonth()]+' '+d.getFullYear()) 
+} 
+
+</script>
+</p>
+</div>
+
+
+
 </body>
 
 </html>

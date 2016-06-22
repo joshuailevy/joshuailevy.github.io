@@ -4,6 +4,9 @@ body {
   font-size:18px;
 }
 
+a {
+  color:rgb(78,42,132);
+}
 nav ul {
   display: inline;
 }
