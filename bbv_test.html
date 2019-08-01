@@ -80,7 +80,7 @@ $.ajax({
 
 var t1 = data1['temp40']
 var x1 = data1['xcoord']
-console.log(Math.max(...x1),Math.min(...x1))
+// console.log(Math.max(...x1),Math.min(...x1))
 var temps  = Smooth(t1,{
 	method: 'linear',
 	scaleTo: [Math.min(...x1)*-1,Math.max(...x1)*-1],
@@ -208,8 +208,7 @@ function draw() {
 		c = (Math.pow(hx-center,2)+Math.pow(hy-center,2)) - Math.pow(canvas.width*0.49,2)
 		if (Math.pow(b,2) -4.*a*c <0){
 			vehicle.angle+= Math.PI;
-			// console.log('ho',Math.pow(b,2) -4.*a*c)
-			// vehicle.angle = vehicle.angle % (Math.PI*2)
+
 		} else{
 			// console.log("hi",a,b,c)
 			j1 = (-b +Math.sqrt(Math.pow(b,2) -4.*a*c))/(2.*a)
@@ -224,11 +223,8 @@ function draw() {
 
 			// l0 = Math.min(Math.abs(ang1-ang2),Math.abs(ang1-ang2-2*Math.PI),Math.abs(ang1-ang2+2*Math.PI))
 			l0 = ang1-ang2//Math.min(ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI)
-			// console.log(vehicle.angle,ang1,ang2)
 			vehicle.angle -= 2*Math.sign(l0)*(Math.PI/2.-Math.abs(l0))
 			vehicle.angle = vehicle.angle % (Math.PI*2)
-			// vehicle.angle+=Math.PI
-			console.log(vehicle.angle, 2*Math.sign(l0)*(Math.PI/2.-Math.abs(l0)))
 
 			//head positions
 			hx = vehicle.x + vehicle.width/2*Math.cos(vehicle.angle-Math.PI/2);
@@ -250,11 +246,9 @@ function draw() {
 		wC = slideContra.value;
 		vL_L = vR_R = wI;
 		vL_R = vR_L = wC;
-		console.log(slideSpeed.value)
 		//baseline speed
 		v0 = slideSpeed.value/scaleFactor;//slideSpeed.value;
 		vL_0 = vR_0 = v0;
-		console.log('hi',scaleFactor)
 		//calculate distance of antennae from hot plate, use spline interpolant to calculate temperature
 
 		//antennae positions
