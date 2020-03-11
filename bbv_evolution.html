@@ -283,7 +283,7 @@ var ints = []
 var hotTime = [];
 var totTime = [];
 for (i = 0; i < numVehicles; i++) {
-	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:50*(Math.random()-0.5),wC:50*(Math.random()-0.5),color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 	avoid_array.push([])
 	ints.push(i)
 	hotTime.push([0.])
@@ -382,16 +382,16 @@ function draw() {
 			if (crossVal <0.25){
 				//get traits from one of the top 3. 
 
-			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:vehicleList[Math.floor(Math.random()*3)].a,b:vehicleList[Math.floor(Math.random()*3)].b,wI:vehicleList[Math.floor(Math.random()*3)].wI,wC:vehicleList[Math.floor(Math.random()*3)].wC,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:vehicleList[Math.floor(Math.random()*3)].a,b:vehicleList[Math.floor(Math.random()*3)].b,wI:vehicleList[Math.floor(Math.random()*3)].wI,wC:vehicleList[Math.floor(Math.random()*3)].wC,color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 			}else{
 			//mutation
 			randVal = Math.random();
 			if (randVal<(1./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner.a+Math.random()-0.5,b:winner.b+(Math.random()-0.5)*.1,wI:winner.wI+Math.random()-0.5,wC:winner.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner.a+Math.random()-0.5,b:winner.b+(Math.random()-0.5)*.1,wI:winner.wI+3*(Math.random()-0.5),wC:winner.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 			} else if (randVal>(2./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner2.a+Math.random()-0.5,b:winner2.b+(Math.random()-0.5)*.1,wI:winner2.wI+Math.random()-0.5,wC:winner2.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner2.a+Math.random()-0.5,b:winner2.b+(Math.random()-0.5)*.1,wI:winner2.wI+3*(Math.random()-0.5),wC:winner2.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 			} else {
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner3.a+Math.random()-0.5,b:winner3.b+(Math.random()-0.5)*.1,wI:winner3.wI+Math.random()-0.5,wC:winner3.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner3.a+Math.random()-0.5,b:winner3.b+(Math.random()-0.5)*.1,wI:winner3.wI+3*(Math.random()-0.5),wC:winner3.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 			}
 			}
 			//also reinitialize readout arrays
@@ -415,7 +415,7 @@ function draw() {
 
 		firstTime = 1;
 	}
-	if((count % 2)==0){
+	if((count % 1)==0){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	// adding the "hot" quadrants
@@ -564,7 +564,7 @@ function draw() {
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
 		}
-		if ((count % 3)==1){
+		if ((count % 2)==1){
 		Plotly.update('tester', {y:avoid_array,x:time_array}, ints)
 		}
 		if(firstTime){
