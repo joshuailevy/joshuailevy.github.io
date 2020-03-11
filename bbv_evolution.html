@@ -32,7 +32,7 @@
 		#tester{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:center;
+			float:right;
 		    display: inline-block;
 		}
 		#tester2{
@@ -42,6 +42,13 @@
 		    display: inline-block;
 		}
 		#tester3{
+		    margin-left: auto;
+		    margin-right: auto;
+			float:left;
+		    display: inline-block;
+		}
+
+		#tester4{
 		    margin-left: auto;
 		    margin-right: auto;
 			float:right;
@@ -72,9 +79,10 @@
 </div>
 </div>
 
-<div id="tester" style="width:700px;height:400px;"></div>
-<div id="tester2" style="width:400px;height:400px;"></div>
-<div id="tester3" style="width:400px;height:400px;"></div>
+<div id="tester" style="width:canvas.width*0.75;height:canvas.width*0.4;"></div>
+<div id="tester2" style="width:canvas.width*0.4;height:canvas.width*0.4;"></div>
+<div id="tester3" style="width:canvas.width*0.4;height:canvas.width*0.4"></div>
+<div id="tester4" style="width:canvas.width*0.75;height:canvas.width*0.4;"></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="splines.js"></script>
@@ -217,7 +225,35 @@ var layout3 = {
 }
 };
 
-
+var layout4 = {
+	title:{
+		text: "Performance Metric across Generations",
+		font: {
+        size: 18,
+        color: '#7f7f7f'
+      },
+  },
+  xaxis: {
+    title: {
+      text: 'Generation',
+      font: {
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    range:[-0.1,1]
+  },
+  yaxis: {
+    title: {
+      text: 'Average Avoidance Index',
+      font: {
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    range: [-1.1, 1.1]
+}
+};
 var colors = ['#ff5733','#7dff33','#3346ff','#f9ff33','#ff9333','#a833ff','#26f7f7','#581845','#e60d34','#000000']
 var numVehicles = 10;
 var pltList = []
@@ -227,10 +263,13 @@ for (i = 0; i < numVehicles; i++) {
 
 var trace2 = {type: 'scatter',mode: 'markers'};
 var trace3 = {type: 'scatter',mode: 'markers'};
+var trace4 = {y:[],type: 'scatter',mode: 'lines+markers'};
 
 Plotly.newPlot('tester', pltList,layout);
 Plotly.newPlot('tester2',[trace2],layout2)
 Plotly.newPlot('tester3',[trace3],layout3)
+Plotly.newPlot('tester4',[trace4],layout4)
+
 // console.log(Math.max(...x1),Math.min(...x1))
 var temps  = Smooth(t1,{
 	method: 'linear',
@@ -283,7 +322,8 @@ var ints = []
 var hotTime = [];
 var totTime = [];
 for (i = 0; i < numVehicles; i++) {
-	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+	randVal = Math.random;
+	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 	avoid_array.push([])
 	ints.push(i)
 	hotTime.push([0.])
@@ -328,28 +368,36 @@ var randVal;
 var crossVal;
 var g = 0;
 var count = 0;
+var avoids = [];
+var sum;
+var avg
+var round = [];
 function draw() {
 	if (totTime[numVehicles-1]/dt > timepointsBeforeEvolution) {
 		count=0;
 		g+=1;
 		//get winner parameters
 		finalParams = [];
+		sum = 0;
 		for (i = 0; i < numVehicles; i++) {
 		finalParams.push(avoid_array[i][avoid_array[i].length-1]);
+		sum+=avoid_array[i][avoid_array[i].length-1];
 		}
+		round.push(g-1)
+		avoids.push(1.0*sum/numVehicles)
 
 		winnerInd = argMax(finalParams);
 		winner =Object.assign({},vehicleList[winnerInd])
-		winner.x = center+Math.random();
-		winner.y =center+Math.random();
+		winner.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner.y =center;
 		winner.angle = Math.random()*2*Math.PI;
 		winner.color = colors[0];
 
 		finalParams[winnerInd] = -100;
 		winner2Ind = argMax(finalParams);
 		winner2 =Object.assign({},vehicleList[winner2Ind])
-		winner2.x = center+Math.random();
-		winner2.y =center+Math.random();
+		winner2.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner2.y =center;
 		winner2.angle = Math.random()*2*Math.PI;
 		winner2.color = colors[1];
 
@@ -357,8 +405,8 @@ function draw() {
 		finalParams[winner2Ind] = -100;
 		winner3Ind = argMax(finalParams);
 		winner3 =Object.assign({},vehicleList[winner3Ind])
-		winner3.x = center+Math.random();
-		winner3.y =center+Math.random();
+		winner3.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner3.y =center;
 		winner3.angle = Math.random()*2*Math.PI;
 		winner3.color = colors[2];
 		// re-initialize. 
@@ -370,6 +418,11 @@ function draw() {
 			pltList.push({name: 'Vehicle '.concat(i.toString()), y:[],mode: 'lines',line:{color:colors[i]}})
 		}
 		Plotly.newPlot('tester',pltList,Object.assign(layout,{title:{text:'Generation '.concat(g)}}));
+		console.log(round,avoids)
+		if (g>1){
+		Plotly.relayout('tester4',Object.assign(layout4,{xaxis:{range:[-0.1,g-1]}}));
+		}
+		Plotly.update('tester4',{y:[avoids]},[0])
 		// Plotly.newPlot('tester', pltList,layout);
 		vehicleList = [Object.assign({},winner),Object.assign({},winner2),Object.assign({},winner3)];
 		hotTime = [[0],[0],[0]];
@@ -382,16 +435,16 @@ function draw() {
 			if (crossVal <0.25){
 				//get traits from one of the top 3. 
 
-			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:vehicleList[Math.floor(Math.random()*3)].a,b:vehicleList[Math.floor(Math.random()*3)].b,wI:vehicleList[Math.floor(Math.random()*3)].wI,wC:vehicleList[Math.floor(Math.random()*3)].wC,color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:vehicleList[Math.floor(Math.random()*3)].a,b:vehicleList[Math.floor(Math.random()*3)].b,wI:vehicleList[Math.floor(Math.random()*3)].wI,wC:vehicleList[Math.floor(Math.random()*3)].wC,color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			}else{
 			//mutation
 			randVal = Math.random();
 			if (randVal<(1./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner.a+Math.random()-0.5,b:winner.b+(Math.random()-0.5)*.1,wI:winner.wI+3*(Math.random()-0.5),wC:winner.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner.a+Math.random()-0.5)>0.01 ? (winner.a+Math.random()-0.5) : winner.a,b:(winner.b+(Math.random()-0.5)*.1)>0.01 ? (winner.b+(Math.random()-0.5)*.1): winner.b ,wI:winner.wI+3*(Math.random()-0.5),wC:winner.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
 			} else if (randVal>(2./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner2.a+Math.random()-0.5,b:winner2.b+(Math.random()-0.5)*.1,wI:winner2.wI+3*(Math.random()-0.5),wC:winner2.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner2.a+Math.random()-0.5)>0.01 ? (winner2.a+Math.random()-0.5) : winner2.a,b:(winner2.b+(Math.random()-0.5)*.1)>0.01 ? (winner2.b+(Math.random()-0.5)*.1): winner2.b ,wI:winner2.wI+3*(Math.random()-0.5),wC:winner2.wC+3*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			} else {
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner3.a+Math.random()-0.5,b:winner3.b+(Math.random()-0.5)*.1,wI:winner3.wI+3*(Math.random()-0.5),wC:winner3.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner3.a+Math.random()-0.5)>0.01 ? (winner3.a+Math.random()-0.5) : winner3.a,b:(winner3.b+(Math.random()-0.5)*.1)>0.01 ? (winner3.b+(Math.random()-0.5)*.1): winner3.b,wI:winner3.wI+3*(Math.random()-0.5),wC:winner3.wC+3*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			}
 			}
 			//also reinitialize readout arrays
@@ -558,8 +611,8 @@ function draw() {
 			avoid_array[i] = avoid_array[i].concat(1. - 2.*(hotTime[i] / totTime[i]))
 			time_array[i] = time_array[i].concat(totTime[i]);
 			}
-			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*0.25;
-			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*0.25;
+			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*1.5;
+			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*1.5;
 			vehicleList[i].angle+= dTheta/60.;//0.1*(Math.random()-0.5);
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
