@@ -32,17 +32,20 @@
 		#tester{
 		    margin-left: auto;
 		    margin-right: auto;
-			text-align:center;
+			float:center;
+		    display: inline-block;
 		}
 		#tester2{
 		    margin-left: auto;
 		    margin-right: auto;
-			text-align:center;
+			float:left;
+		    display: inline-block;
 		}
 		#tester3{
 		    margin-left: auto;
 		    margin-right: auto;
-			text-align:right;
+			float:right;
+		    display: inline-block;
 		}
 
 	</style>
@@ -69,9 +72,9 @@
 </div>
 </div>
 
-<div id="tester" style="width:800px;height:400px;"></div>
-<!-- <div id="tester2" style="width:400px;height:400px;"></div>
-<div id="tester3" style="width:400px;height:400px;"></div> -->
+<div id="tester" style="width:700px;height:400px;"></div>
+<div id="tester2" style="width:400px;height:400px;"></div>
+<div id="tester3" style="width:400px;height:400px;"></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="splines.js"></script>
@@ -134,10 +137,17 @@ var x1 = data1['xcoord']
 var dt = 1./30.
 var avoid_array = [];
 var time_array = [];
-var timepointsBeforeEvolution = 500;
+var timepointsBeforeEvolution = 1200;
 
 
 var layout = {
+	title:{
+		text: "Generation 0",
+		font: {
+        size: 18,
+        color: '#7f7f7f'
+      },
+  },
   xaxis: {
     title: {
       text: 'Time',
@@ -180,7 +190,7 @@ var layout2 = {
         color: '#7f7f7f'
       }
     },
-    range: [0,1]
+    range: [0,1.5]
 }
 };
 
@@ -208,16 +218,19 @@ var layout3 = {
 };
 
 
-var colors = ['#ff5733','#7dff33','#3346ff','#f9ff33','#ff9333','#a833ff','#26f7f7','#581845']
-var numVehicles = 8;
+var colors = ['#ff5733','#7dff33','#3346ff','#f9ff33','#ff9333','#a833ff','#26f7f7','#581845','#e60d34','#000000']
+var numVehicles = 10;
 var pltList = []
 for (i = 0; i < numVehicles; i++) {
-	pltList.push({ mode: 'lines',line:{color:colors[i]}})
+	pltList.push({ name: 'Vehicle '.concat(i.toString()),mode: 'lines',line:{color:colors[i]}})
 }
 
+var trace2 = {type: 'scatter',mode: 'markers'};
+var trace3 = {type: 'scatter',mode: 'markers'};
+
 Plotly.newPlot('tester', pltList,layout);
-
-
+Plotly.newPlot('tester2',[trace2],layout2)
+Plotly.newPlot('tester3',[trace3],layout3)
 // console.log(Math.max(...x1),Math.min(...x1))
 var temps  = Smooth(t1,{
 	method: 'linear',
@@ -232,17 +245,18 @@ var vehicle = {
 	height:canvas.width*0.04,
 	// color: 'blue',
 	// angle: Math.PI/4*0,
-	x: canvas.width/2,//centroid position
-	y: canvas.height/2,
+	// x: canvas.width/2,//centroid position
+	// y: canvas.height/2,
 	draw: function() {
 
 		ctx.save()
 		ctx.beginPath();
-		ctx.fillStyle = this.color;
 		ctx.translate(this.x, this.y);
 		ctx.rotate(this.angle);
 		ctx.translate(-this.x, -this.y);
 		ctx.strokeRect(this.x-this.width/2, this.y-this.height/2, this.width,this.height);
+		ctx.fillStyle = this.color;
+		ctx.fill()
 		ctx.closePath();
 		//wheels
 		ctx.beginPath();
@@ -260,23 +274,6 @@ var vehicle = {
 		ctx.closePath();
 
 		ctx.restore()
-		// ctx.beginPath();
-		// // adding the "hot" quadrants
-		// ctx.fillStyle = 'red';
-		// ctx.globalAlpha = 0.2;
-		// ctx.arc(canvas.width/2,canvas.width/2,canvas.width/2,3*Math.PI/2,Math.PI, true)
-		// ctx.lineTo(canvas.width/2,canvas.width/2)
-		// ctx.fill();
-		// ctx.closePath();
-		// ctx.beginPath();
-
-		// ctx.fillStyle = 'red';
-		// ctx.globalAlpha = 0.2;
-		// ctx.arc(canvas.width/2,canvas.width/2,canvas.width/2,Math.PI/2,0, true)
-		// ctx.lineTo(canvas.width/2,canvas.width/2)
-		// ctx.fill();
-		// ctx.closePath();
-		// ctx.restore()
 	}
 };
 
@@ -286,13 +283,24 @@ var ints = []
 var hotTime = [];
 var totTime = [];
 for (i = 0; i < numVehicles; i++) {
-	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i]},vehicle));
+	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:50*(Math.random()-0.5),wC:50*(Math.random()-0.5),color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
 	avoid_array.push([])
 	ints.push(i)
 	hotTime.push([0.])
 	time_array.push([])
 	totTime.push([0.])
 } 
+var aList = [];
+var bList = [];
+var wIList = [];
+var wCList = [];
+for (i = 0; i < numVehicles; i++) {
+	aList.push(vehicleList[i].a);
+	bList.push(vehicleList[i].b);
+	wIList.push(vehicleList[i].wI);
+	wCList.push(vehicleList[i].wC);
+}
+var firstTime = 1;
 
 function fix_dpi() {
 //get DPI
@@ -313,11 +321,17 @@ function argMax(array) {
   return [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
 }
 
-
+function argMin(array) {
+  return [].map.call(array, (x, i) => [-x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1];
+}
+var randVal;
+var crossVal;
+var g = 0;
+var count = 0;
 function draw() {
-
 	if (totTime[numVehicles-1]/dt > timepointsBeforeEvolution) {
-
+		count=0;
+		g+=1;
 		//get winner parameters
 		finalParams = [];
 		for (i = 0; i < numVehicles; i++) {
@@ -326,30 +340,67 @@ function draw() {
 
 		winnerInd = argMax(finalParams);
 		winner =Object.assign({},vehicleList[winnerInd])
-		winner.x = center;
-		winner.y =center;
+		winner.x = center+Math.random();
+		winner.y =center+Math.random();
+		winner.angle = Math.random()*2*Math.PI;
+		winner.color = colors[0];
+
+		finalParams[winnerInd] = -100;
+		winner2Ind = argMax(finalParams);
+		winner2 =Object.assign({},vehicleList[winner2Ind])
+		winner2.x = center+Math.random();
+		winner2.y =center+Math.random();
+		winner2.angle = Math.random()*2*Math.PI;
+		winner2.color = colors[1];
+
+
+		finalParams[winner2Ind] = -100;
+		winner3Ind = argMax(finalParams);
+		winner3 =Object.assign({},vehicleList[winner3Ind])
+		winner3.x = center+Math.random();
+		winner3.y =center+Math.random();
+		winner3.angle = Math.random()*2*Math.PI;
+		winner3.color = colors[2];
 		// re-initialize. 
 		pltList =[];
 		Plotly.deleteTraces('tester',ints)
-		for (i = 0; i < numVehicles; i++) {
-			pltList.push({ y:[],
-				mode: 'lines',line:{color:colors[i]}})
-		}
-		Plotly.newPlot('tester',pltList,layout)
-		// Plotly.newPlot('tester', pltList,layout);
-		vehicleList = [Object.assign({},winner)];
-		hotTime = [[0]];
-		time_array = [[]];
-		avoid_array = [[]];
-		totTime = [[0]];
+		pltList.push({name: 'Leader', y:[], mode: 'lines',line:{color:colors[i]}})
+
 		for (i = 1; i < numVehicles; i++) {
-			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner.a+Math.random()-0.5,b:winner.b+(Math.random()-0.5)*.1,wI:winner.wI+Math.random()-0.5,wC:winner.wC+Math.random()-0.5,color:colors[i]},vehicle));
+			pltList.push({name: 'Vehicle '.concat(i.toString()), y:[],mode: 'lines',line:{color:colors[i]}})
+		}
+		Plotly.newPlot('tester',pltList,Object.assign(layout,{title:{text:'Generation '.concat(g)}}));
+		// Plotly.newPlot('tester', pltList,layout);
+		vehicleList = [Object.assign({},winner),Object.assign({},winner2),Object.assign({},winner3)];
+		hotTime = [[0],[0],[0]];
+		time_array = [[],[],[]];
+		avoid_array = [[],[],[]];
+		totTime = [[0],[0],[0]];
+		for (i = 3; i < numVehicles; i++) {
+			//crossover
+			crossVal = Math.random();
+			if (crossVal <0.25){
+				//get traits from one of the top 3. 
+
+			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:vehicleList[Math.floor(Math.random()*3)].a,b:vehicleList[Math.floor(Math.random()*3)].b,wI:vehicleList[Math.floor(Math.random()*3)].wI,wC:vehicleList[Math.floor(Math.random()*3)].wC,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+			}else{
+			//mutation
+			randVal = Math.random();
+			if (randVal<(1./3.)){
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner.a+Math.random()-0.5,b:winner.b+(Math.random()-0.5)*.1,wI:winner.wI+Math.random()-0.5,wC:winner.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+			} else if (randVal>(2./3.)){
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner2.a+Math.random()-0.5,b:winner2.b+(Math.random()-0.5)*.1,wI:winner2.wI+Math.random()-0.5,wC:winner2.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+			} else {
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:winner3.a+Math.random()-0.5,b:winner3.b+(Math.random()-0.5)*.1,wI:winner3.wI+Math.random()-0.5,wC:winner3.wC+Math.random()-0.5,color:colors[i],x:center+Math.random(),y:center+Math.random()},vehicle));
+			}
+			}
+			//also reinitialize readout arrays
 			avoid_array.push([]);
 			time_array.push([]);
 			hotTime.push([0.]);
 			totTime.push([0.]);
-		} 
-
+				
+		}
 		//also update plots of parameters 
 		aList = [];
 		bList = [];
@@ -362,24 +413,10 @@ function draw() {
 			wCList.push(vehicleList[i].wC);
 		}
 
-		// trace2 = {x:aList,y=bList,marker:{color:colors[0:numVehicles-1]}}
-		// trace3 = {x:wIList,y=wCList,marker:{color:colors[0:numVehicles-1]}}
-		// // Plotly.deleteTraces('tester2',[0])
-		// Plotly.deleteTraces('tester3',[0])
-
-		// // Plotly.newPlot('tester2',[trace2],layout2)
-		// Plotly.newPlot('tester3',[trace3],layout)
-		// ctx.font = "30px Arial";
-		// ctx.strokeText("Evolve!", center, center);
-		// setTimeout(ctx.restore(),1000);
+		firstTime = 1;
 	}
-
-
+	if((count % 2)==0){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	for (i = 0; i < numVehicles; i++) {
-		vehicleList[i].draw();
-	}
-
 	ctx.beginPath();
 	// adding the "hot" quadrants
 	ctx.fillStyle = 'red';
@@ -404,9 +441,13 @@ function draw() {
 	ctx.stroke()
 	ctx.closePath()
 
+	for (i = 0; i < numVehicles; i++) {
+		vehicleList[i].draw();
+	}
+
 	ctx.restore()
 	ctx.globalAlpha = 0.7;
-
+	}
 	if(drawing){
 		//try to update. if we go out of the region, perform reflection
 		for (i = 0; i < numVehicles; i++) {
@@ -436,10 +477,22 @@ function draw() {
 				// console.log(xp,yp,hx,hy)
 				ang2 = (Math.atan2(yp-center,xp-center))%(2*Math.PI)
 				ang1 = (Math.atan2(vy,vx))%(2*Math.PI)
+				//this is wrong.
+				// l0 =Math.min(ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI)
 
-				l0 = ang1-ang2//Math.min(ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI)
-				vehicleList[i].angle -= 2*Math.sign(l0)*(Math.PI/2.-Math.abs(l0))
+
+				l00 = [Math.abs(ang1-ang2),Math.abs(ang1-ang2-2*Math.PI),Math.abs(ang1-ang2+2*Math.PI)]
+				l01 = [ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI]
+				l0 =argMin(l00)
+
+				vehicleList[i].angle -= 2*Math.sign(l01[l0])*(Math.PI/2.-l00[l0])
 				vehicleList[i].angle = vehicleList[i].angle % (Math.PI*2)
+
+				// l00 = [Math.abs(ang1-ang2),Math.abs(ang1-ang2-2*Math.PI),Math.abs(ang1-ang2+2*Math.PI)]
+				// l01 = [ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI]
+				// l0 =argMin(l00)
+				// vehicleList[i].angle = 2*Math.sign(l00[l0])*(Math.PI-l00[l0])
+				// vehicleList[i].angle = vehicleList[i].angle % (Math.PI*2)
 
 				//head positions
 				hx = vehicleList[i].x + vehicleList[i].width/2*Math.cos(vehicleList[i].angle-Math.PI/2);
@@ -501,17 +554,31 @@ function draw() {
 			// make avoidance plot. 
 			hotTime[i]= parseFloat(hotTime[i])+ parseFloat(hot)
 			totTime[i]  = parseFloat(totTime[i]) + dt
-			time_array[i] = time_array[i].concat(totTime[i]);
-
+			if ((count % 5)==1){
 			avoid_array[i] = avoid_array[i].concat(1. - 2.*(hotTime[i] / totTime[i]))
-
-			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dv/60.;
-			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dv/60.;
+			time_array[i] = time_array[i].concat(totTime[i]);
+			}
+			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*0.25;
+			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*0.25;
 			vehicleList[i].angle+= dTheta/60.;//0.1*(Math.random()-0.5);
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
 		}
+		if ((count % 3)==1){
 		Plotly.update('tester', {y:avoid_array,x:time_array}, ints)
+		}
+		if(firstTime){
+			trace2 = {type: 'scatter',mode: 'markers',x:aList,y:bList,marker:{color:colors}}
+			trace3 = {type: 'scatter',mode: 'markers',x:wIList,y:wCList,marker:{color:colors}}
+			Plotly.deleteTraces('tester2',[0])
+			Plotly.deleteTraces('tester3',[0])
+
+			Plotly.newPlot('tester2',[trace2],layout2)
+			Plotly.newPlot('tester3',[trace3],layout3)
+		}
+
+		firstTime = 0;
+		count+=1;
 		raf = window.requestAnimationFrame(draw);
 
 	}
