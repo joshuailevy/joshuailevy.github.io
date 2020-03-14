@@ -3,87 +3,144 @@
  <head>
 <style>
 
+		#title {
+	margin: 1em 0 0.5em 0;
+	color: #343434;
+	font-weight: normal;
+	font-family: 'Ultra', sans-serif;   
+	font-size: 36px;
+	line-height: 42px;
+	text-transform: uppercase;
+	text-shadow: 0 2px white, 0 3px #777;
+		}
+
+
 		#canvas1{
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
     display: block;
-    /*float: left;*/
-    /*width: 800px;*/
-}
-		#container{
-			width:100%;
-			text-align:center;
 		}
+
+
+		.grid-container {
+			text-align:center;
+			display: grid;
+			grid-template-columns:600px 400px 600px;
+			grid-column-gap:50px;
+			/*grid-row-gap:100px;*/
+			  /*grid-template-columns: auto auto auto;*/
+			align-items:start;
+
+		}
+
+		#container{
+			grid-column-start: 1;
+		  grid-column-end: 2;
+/*		    grid-row-start: 1;
+		  grid-row-end: 3;*/
+		}
+		#container2{
+			grid-column-start: 2;
+		  grid-column-end: 3;
+/*		    grid-row-start: 1;
+		  grid-row-end: 3;*/
+/*		    flex-direction: column;
+	*/	}
+		#container3{
+			grid-column-start: 3;
+		  grid-column-end:4;
+/*		    grid-row-start: 1;
+		  grid-row-end: 3;*/
+/*		    flex-direction: column;
+*/	}
+
 		#paramList{
 			vertical-align: top;
 	    padding: 20px;
 	    margin: 0 auto;
-			display:inline-block;
 		}
 
 		#canvasDiv{
 	    padding: 20px;
 	    margin: 0 auto;
-			display:inline-block;
+		display:inline-block;
 		}
 
 		#tester{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:right;
-		    display: inline-block;
+			float:center;
+		    /*display: inline-block;*/
 		}
 		#tester2{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:left;
-		    display: inline-block;
+			float:center;
+		    /*display: inline-block;*/
 		}
 		#tester3{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:left;
-		    display: inline-block;
+			float:center;
+		    /*display: inline-block;*/
 		}
 
 		#tester4{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:right;
-		    display: inline-block;
+			float:center;
+		    /*display: inline-block;*/
 		}
 
+		.box {
+		/*background-color: #FFFFFF;*/
+		/*color: #FFFFFF;*/
+		border:5px solid grey;
+		/*padding: 20px;*/
+		/*font-size: 150%;*/
+		}
+
+		.button0:hover{
+		  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		}
+
+		.modebar{
+		      display: none !important;
+		}
 	</style>
  </head>
  <body>
-	<h2 align="center">
+<h1 id='title' align="center">
 	Braitenberg Vehicle Evolution!
-</h2>
-<div id="container" align="center">
+</h1>
+<div class="grid-container" align='center'>
+<div class='box' id="container" align="center">
+<h2> Simulation of each generation </h2>
 <div id="canvasDiv">
-<canvas id="canvas1" width="500" height="500"></canvas>
-</div>
 
-<div id="paramList">
-	<button id='startBtn' >Start</button>
-	<button id='stopBtn'>Stop</button>
-	<!-- <p> <b> Parameters: </b> </p> -->
-	<!-- <p> Ipsilateral Weight: </p> -->
-<!-- <input id="slideIpsi" type="range" min="-30" max="30" step="0.5" value="0">
-	<p> Contralateral Weight: </p>
-<input id="slideContra" type="range" min="-30" max="30" step="0.5" value="0">
-<p> Base Walking Speed: </p>
-<input id="slideSpeed" type="range" min="0" max="15" step="0.5" value="5"> -->
+<canvas id="canvas1" width="600" height="600"></canvas>
+<div id="paramList" align="center">
+	<button class='button0' id='startBtn' >Start</button>
+	<button class='button0' id='stopBtn'>Stop</button>
+</div>
 </div>
 </div>
 
-<div id="tester" style="width:canvas.width*0.75;height:canvas.width*0.4;"></div>
-<div id="tester2" style="width:canvas.width*0.4;height:canvas.width*0.4;"></div>
-<div id="tester3" style="width:canvas.width*0.4;height:canvas.width*0.4"></div>
-<div id="tester4" style="width:canvas.width*0.75;height:canvas.width*0.4;"></div>
 
+<div  class='box' id="container2" align="center" flex-direction="column">
+<h2> Parameters of Current Generation </h2>
+<div id="tester2" ></div>
+<div id="tester3" ></div>
+</div>
+
+<div  class='box' id="container3" align="center">
+<h2> A simple objective: how well does the vehicle avoid?</h2>
+<div id="tester" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
+<div id="tester4" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
+</div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="splines.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -149,6 +206,8 @@ var timepointsBeforeEvolution = 1200;
 
 
 var layout = {
+	height:350,
+	width:500,
 	title:{
 		text: "Generation 0",
 		font: {
@@ -175,12 +234,23 @@ var layout = {
       }
     },
     range: [-1.1, 1.1]
-}
+},
+  margin: {
+    l: 50,
+    r: 10,
+    b: 40,
+    t: 40,
+    pad: 2
+  },
 };
 
 
 var layout2 = {
+width:350,
+height:350,
+
   xaxis: {
+    showgrid: true,
     title: {
       text: 'a',
       font: {
@@ -190,7 +260,8 @@ var layout2 = {
     },
     range: [0,30]
   },
-  yaxis: {
+  yaxis: {    
+  	showgrid: true,
     title: {
       text: 'b',
       font: {
@@ -199,11 +270,21 @@ var layout2 = {
       }
     },
     range: [0,1.5]
-}
+},
+  margin: {
+    l: 50,
+    r: 10,
+    b: 40,
+    t: 40,
+    pad: 2
+  },
 };
 
 var layout3 = {
+	width:350,
+	height:350,
   xaxis: {
+    showgrid: true,
     title: {
       text: 'Ipsi. Weight',
       font: {
@@ -214,6 +295,7 @@ var layout3 = {
     range: [-25,25]
   },
   yaxis: {
+    showgrid: true,
     title: {
       text: 'Contra. Weight',
       font: {
@@ -222,12 +304,21 @@ var layout3 = {
       }
     },
     range: [-25,25]
-}
+},
+ margin: {
+    l: 50,
+    r: 10,
+    b: 40,
+    t: 10,
+    pad: 2
+  },
 };
 
 var layout4 = {
+	height:350,
+	width:500,
 	title:{
-		text: "Performance Metric across Generations",
+		text: "Avoidance Index across Generations",
 		font: {
         size: 18,
         color: '#7f7f7f'
@@ -251,6 +342,13 @@ var layout4 = {
         color: '#7f7f7f'
       }
     },
+     margin: {
+    l: 50,
+    r: 10,
+    b: 40,
+    t: 40,
+    pad: 2
+  },
     range: [-1.1, 1.1]
 }
 };
@@ -418,7 +516,7 @@ function draw() {
 			pltList.push({name: 'Vehicle '.concat(i.toString()), y:[],mode: 'lines',line:{color:colors[i]}})
 		}
 		Plotly.newPlot('tester',pltList,Object.assign(layout,{title:{text:'Generation '.concat(g)}}));
-		console.log(round,avoids)
+		// console.log(round,avoids)
 		if (g>1){
 		Plotly.relayout('tester4',Object.assign(layout4,{xaxis:{range:[-0.1,g-1]}}));
 		}
@@ -466,6 +564,7 @@ function draw() {
 			wCList.push(vehicleList[i].wC);
 		}
 
+	console.log(aList,bList,wIList,wCList)
 		firstTime = 1;
 	}
 	if((count % 1)==0){
