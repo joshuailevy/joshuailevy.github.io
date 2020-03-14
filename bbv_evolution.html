@@ -4,7 +4,7 @@
 <style>
 
 		#title {
-	margin: 1em 0 0.5em 0;
+	/*margin: 1em 0 0.5em 0;*/
 	color: #343434;
 	font-weight: normal;
 	font-family: 'Ultra', sans-serif;   
@@ -12,6 +12,10 @@
 	line-height: 42px;
 	text-transform: uppercase;
 	text-shadow: 0 2px white, 0 3px #777;
+	   grid-row-start: 1;
+		  grid-row-end: 2;
+		grid-column-start: 1;
+		  grid-column-end: 4;
 		}
 
 
@@ -22,37 +26,51 @@
     margin-right: auto;
     display: block;
 		}
-
-
-		.grid-container {
-			text-align:center;
-			display: grid;
-			grid-template-columns:600px 400px 600px;
-			grid-column-gap:50px;
-			/*grid-row-gap:100px;*/
-			  /*grid-template-columns: auto auto auto;*/
-			align-items:start;
+		#bigDiv{
+		 /*margin: auto;*/
+  width: 80%;
+/*  padding-left: 0;
+    padding-right: 0;*/
+    /*margin-left: auto;*/
+    margin-right: auto;
+  /*border: 3px solid green;*/
+  padding: 5px;
 
 		}
 
+		#gridCont{
+			text-align:center;
+			display: grid;
+			grid-template-columns:660px 400px 600px;
+			grid-column-gap:60px;
+			grid-template-rows:120px 800px 100px;
+			align-items:center;
+
+		}
+		#lastBin{
+		   grid-row-start: 3;
+		  grid-row-end: 4;
+		grid-column-start: 1;
+		  grid-column-end: 4;
+		}
 		#container{
 			grid-column-start: 1;
 		  grid-column-end: 2;
-/*		    grid-row-start: 1;
-		  grid-row-end: 3;*/
+		    grid-row-start: 2;
+		  grid-row-end: 3;
 		}
 		#container2{
 			grid-column-start: 2;
 		  grid-column-end: 3;
-/*		    grid-row-start: 1;
-		  grid-row-end: 3;*/
+		    grid-row-start: 2;
+		  grid-row-end: 3;
 /*		    flex-direction: column;
 	*/	}
 		#container3{
 			grid-column-start: 3;
 		  grid-column-end:4;
-/*		    grid-row-start: 1;
-		  grid-row-end: 3;*/
+		    grid-row-start: 2;
+		  grid-row-end: 3;
 /*		    flex-direction: column;
 */	}
 
@@ -71,27 +89,19 @@
 		#tester{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:center;
-		    /*display: inline-block;*/
 		}
 		#tester2{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:center;
-		    /*display: inline-block;*/
 		}
 		#tester3{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:center;
-		    /*display: inline-block;*/
 		}
 
 		#tester4{
 		    margin-left: auto;
 		    margin-right: auto;
-			float:center;
-		    /*display: inline-block;*/
 		}
 
 		.box {
@@ -112,10 +122,11 @@
 	</style>
  </head>
  <body>
+ <div id='bigDiv'>
+<div id='gridCont' class="grid-container" margin='auto'>
 <h1 id='title' align="center">
 	Braitenberg Vehicle Evolution!
 </h1>
-<div class="grid-container" align='center'>
 <div class='box' id="container" align="center">
 <h2> Simulation of each generation </h2>
 <div id="canvasDiv">
@@ -140,7 +151,16 @@
 <div id="tester" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
 <div id="tester4" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
 </div>
+<br style = “line-height:500px;”>
+<h2 id='lastBin' align='center'> Scroll down for more information!</h3>
+
 </div>
+</div>
+<!-- 
+ -->
+
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="splines.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -151,7 +171,15 @@ var sliderIpsi = document.getElementById("slideIpsi");
 var sliderContra = document.getElementById("slideContra");
 var sliderSpeed = document.getElementById("slideSpeed");
 
+
+
 fix_dpi()
+
+var cg2 = document.getElementById('container3')
+canvas.width = Math.max(cg2.clientWidth,cg2.clientHeight);
+canvas.height = Math.max(cg2.clientWidth,cg2.clientHeight);
+console.log(canvas.width,canvas.height)
+
 var ctx = canvas.getContext('2d');
 ////
 ctx.beginPath();
