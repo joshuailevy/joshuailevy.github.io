@@ -16,9 +16,12 @@ body {
     align-items: center;
 }
 
+#disclaimer{
+  border: 1px solid red;
+  color: red;
+}
 
-
-	#Qs{
+	.Qs{
 	color:#000000;
 	font-weight: normal;
 	font-family: 'Arial', sans-serif;   
@@ -63,9 +66,9 @@ body {
 		#gridCont{
 			text-align:center;
 			display: grid;
-			grid-template-columns:650px 400px 600px;
+			grid-template-columns:650px 450px 650px;
 			grid-column-gap:60px;
-			grid-template-rows:120px 800px 100px;
+			grid-template-rows:120px 850px 100px;
 			align-items:center;
 
 		}
@@ -74,9 +77,9 @@ body {
 		#gridContInfo{
 		text-align:center;
 		display: grid;
-		grid-template-columns:550px 550px 550px;
-		grid-column-gap:75px;
-		grid-template-rows:900px;
+		grid-template-columns:600px 600px 600px;
+		grid-column-gap:60px;
+		grid-template-rows:1000px;
 		align-items:center;
 		}
 		#lastBin{
@@ -88,26 +91,31 @@ body {
 		  grid-column-end: 4;
 		}
 		#infoc1{
-		  border: 1px solid rgba(0, 0, 0, 0.8);
-		  padding: 20px;
+		  /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+		  /*padding: 20px;*/
+		  align-self: start;
 			grid-column-start: 1;
 		  grid-column-end: 2;
 		}
 		#infoc2{
+			align-self: start;
 		  grid-column-start: 2;
 		  grid-column-end: 3;
 		}
 		#infoc3{
+			align-self: start;
 		  grid-column-start: 3;
 		  grid-column-end: 4;
 		}
 		#container{
+			align-self: start;
 			grid-column-start: 1;
 		  grid-column-end: 2;
 		    grid-row-start: 2;
 		  grid-row-end: 3;
 		}
 		#container2{
+			align-self: start;
 			grid-column-start: 2;
 		  grid-column-end: 3;
 		    grid-row-start: 2;
@@ -115,6 +123,7 @@ body {
 /*		    flex-direction: column;
 	*/	}
 		#container3{
+			align-self: start;
 			grid-column-start: 3;
 		  grid-column-end:4;
 		    grid-row-start: 2;
@@ -152,8 +161,41 @@ body {
 		    margin-right: auto;
 		}
 
-		.button0:hover{
-		  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+		#startBtn {
+		  display: inline-block;
+		  padding: 15px 25px;
+		  font-size: 24px;
+		  cursor: pointer;
+		  text-align: center;
+		  text-decoration: none;
+		  outline: none;
+		  color: #fff;
+		  background-color: #4CAF50;
+		  border: none;
+		  border-radius: 15px;
+		  box-shadow: 0 9px #999;
+		}
+		#stopBtn {
+		  display: inline-block;
+		  padding: 15px 25px;
+		  font-size: 24px;
+		  cursor: pointer;
+		  text-align: center;
+		  text-decoration: none;
+		  outline: none;
+		  color: #fff;
+		  background-color: #f44336;
+		  border: none;
+		  border-radius: 15px;
+		  box-shadow: 0 9px #999;
+		}
+
+		.button:hover {background-color: #3e8e41}
+
+		.button:active {
+		  background-color: #3e8e41;
+		  box-shadow: 0 5px #666;
+		  transform: translateY(4px);
 		}
 
 		.modebar{
@@ -174,8 +216,8 @@ body {
 
 <canvas id="canvas1"></canvas>
 <div id="paramList" align="center">
-	<button class='button0' id='startBtn' >Start</button>
-	<button class='button0' id='stopBtn'>Stop</button>
+	<button class='button' id='startBtn' >Start</button>
+	<button class='button' id='stopBtn'>Stop</button>
 </div>
 </div>
 </div>
@@ -184,6 +226,7 @@ body {
 <div  id="container2" align="center" flex-direction="column">
 <h2> Sensor Parameters </h2>
 <div id="tester2" ></div>
+<br><br>
 <h2> Connectivity Parameters </h2>
 
 <div id="tester3" ></div>
@@ -192,6 +235,7 @@ body {
 <div  id="container3" align="center">
 <h2> How well does the vehicle avoid heat?</h2>
 <div id="tester"></div>
+<h2> Avoidance Index Evolution</h2>
 <div id="tester4" ></div>
 </div>
 <!-- <br style = “line-height:500px;”> -->
@@ -201,15 +245,22 @@ body {
 <div id="infoc1">
 <h2> Approximating a fly with a simple vehicle </h2>
 <img src="fly_vehicle.svg" alt="Approximating a fly">
+
+<p class="Qs" align='left'>
+<b>Why is this a good model of fly thermotaxis? </b><br>
+When distilled down to fundamentals, sensory navigation describes the process in which a (noisy) signal drives motor system responses, in accordance with the intrisic tuning and wiring process of the reciever. This model formulation, an adaptation of the original model proposed by the cyberneticist Valentino Braitenberg, distills these concepts to their most basic, providing an intuitive interpretation of neuronal circuitry and their behavioral consequences. 
+</p>
+
 </div>
 <div id="infoc2">
 <h2> Evolutionary Optimization FAQs </h2>
-<p id="Qs" align='left'>
+<p class="Qs" align='left'>
 <b> What are the model parameters?</b> <br>
-We describe our sensory response, h, as a function of the temperature above baseline, s, at the height of the sensor (e.g. a fly's antenna). \[ h(s) = e^{(-a\times s+b)}.\] Rather than a true readout of temperature, s is effected by time correlated noise, \( \epsilon(t) \), simulated by an <a href=" 
+We describe a nonlinear (logistic) sensory response, h, as a function of the temperature above baseline, s, at the height of the sensor (e.g. a fly's antenna). \[ h(s) = \frac{1}{1+e^{(-a\times s+b)}} .\] Rather than a true readout of temperature, s is effected by time correlated noise, \( \epsilon(t) \), simulated by an <a href=" 
 https://en.wikipedia.org/wiki/Ornstein%E2%80%93Uhlenbeck_process"> Ornstein-Uhlenbeck </a> process. The processed input is linearly combined (using the Ipsilateral and Contralateral weights) to get the wheel speed, for example, 
 \[ v_L = h(s_L) w_I + h(s_R) w_C + v_0 + \gamma (t), \]
 where \(v_0\) is the baseline walking speed and \(\gamma (t)\) is time correlated noise. 
+<br>
 <br>
 <b> How do we evolve the population? </b> <br>
 After each generation, we take the strongest performers (here, we take the top 3) and allow them to continue to the next generation. The rest of the next generation is then composed of mutations (i.e. random perturbations to the parameters of the winners) or crossovers (i.e. random mixtures of the parameters of each of the winners).
@@ -219,12 +270,13 @@ After each generation, we take the strongest performers (here, we take the top 3
 <div id="infoc3">
 <h2> Sensory Navigation FAQs </h2>
 
-<p id="Qs" align='left'>
+<p class="Qs" align='left'>
 <b>What is the avoidance index (AI)? </b><br>
 It's a measurement of thermal preference over time. An AI score of 1 signifies perfect avoidance of the heat stimulus (pink side), while -1 shows perfect attraction to the heat stimulus. If there is no preference, we expect to see an AI score of approximately 0.<br><br>
 <b> What can we learn from it? </b> <br>
 Studying the AI in flies allows us to quantify the effect of some permutation (e.g. a mutation) on thermal preference. Similar to a fly, evolution can allow the Braitenberg vehicle to refine its sensory and motor parameters to effectively avoid dangerous stimuli. 
 </p>
+<h2 id = "disclaimer"> GENERAL DISCLAIMER: While this webpage is meant to describe the evolutionary algorithm used in our work, it is a simplified problem concerned only with optimization of a single objective (Avoidance Index). </h2>
 </div>
 <hr>
 </div>
@@ -317,7 +369,7 @@ var timepointsBeforeEvolution = 1200;
 
 var layout = {
 	height:350,
-	width:500,
+	width:350,
 	title:{
 		text: "Generation 0",
 		font: {
@@ -337,7 +389,7 @@ var layout = {
   },
   yaxis: {
     title: {
-      text: 'Avoidance Index',
+      text: 'Avoidance Index (AI)',
       font: {
         size: 18,
         color: '#7f7f7f'
@@ -353,50 +405,10 @@ var layout = {
     pad: 2
   },
 };
-
-var layout0 = {
-	height:350,
-	width:500,
-	// title:{
-	// 	text: "Generation 0",
-	// 	font: {
- //        size: 18,
- //        color: '#7f7f7f'
- //      },
-  // },
-  xaxis: {
-    title: {
-      text: 'Time',
-      font: {
-        size: 18,
-        color: '#7f7f7f'
-      }
-    },
-    // range: [0,timepointsBeforeEvolution*dt]
-  },
-  yaxis: {
-    title: {
-      text: 'Avoidance Index',
-      font: {
-        size: 18,
-        color: '#7f7f7f'
-      }
-    },
-    range: [-1.1, 1.1]
-},
-  margin: {
-    l: 50,
-    r: 10,
-    b: 40,
-    t: 40,
-    pad: 2
-  },
-};
-
 
 var layout2 = {
-width:300,
-height:300,
+width:275,
+height:275,
 
   xaxis: {
     showgrid: true,
@@ -418,7 +430,7 @@ height:300,
         color: '#7f7f7f'
       }
     },
-    range: [0,1.5]
+    range: [0,2.0]
 },
   margin: {
     l: 50,
@@ -464,16 +476,10 @@ var layout3 = {
 };
 
 var layout4 = {
-	height:350,
+	height:300,
 	width:500,
-	title:{
-		text: "Avoidance Index Evolution",
-		font: {
-        size: 18,
-        color: '#7f7f7f'
-      },
-  },
   xaxis: {
+  	showgrid: true,
     title: {
       text: 'Generation',
       font: {
@@ -484,25 +490,26 @@ var layout4 = {
     range:[-0.1,1]
   },
   yaxis: {
+  	showgrid: true,
     title: {
-      text: 'Average Avoidance Index',
+      text: 'Mean AI',
       font: {
         size: 18,
         color: '#7f7f7f'
       }
     },
-     margin: {
+    range: [-1.1, 1.1],
+},
+    margin: {
     l: 50,
     r: 10,
     b: 40,
-    t: 40,
+    t: 10,
     pad: 2
   },
-    range: [-1.1, 1.1]
-}
 };
-var colors = ['#ff5733','#7dff33','#3346ff','#f9ff33','#ff9333','#a833ff','#26f7f7','#581845','#e60d34','#000000']
-var numVehicles = 10;
+var colors = ['#ff5733','#7dff33','#3346ff','#f9ff33','#ff9333','#a833ff','#26f7f7','#581845','#e60d34','#000000','#808080','#ff33cc']
+var numVehicles = 12;
 var pltList = []
 for (i = 0; i < numVehicles; i++) {
 	pltList.push({ name: 'Vehicle '.concat(i.toString()),mode: 'lines',line:{color:colors[i]}})
@@ -570,7 +577,7 @@ var hotTime = [];
 var totTime = [];
 for (i = 0; i < numVehicles; i++) {
 	randVal = Math.random;
-	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.01,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:5.*Math.random(),b:Math.random()+0.025,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 	avoid_array.push([])
 	ints.push(i)
 	hotTime.push([0.])
@@ -581,6 +588,12 @@ var aList = [];
 var bList = [];
 var wIList = [];
 var wCList = [];
+
+let histaList = new Set([]);
+let histbList = new Set([]);
+let histwIList = new Set([]);
+let histwCList = new Set([]);
+
 for (i = 0; i < numVehicles; i++) {
 	aList.push(vehicleList[i].a);
 	bList.push(vehicleList[i].b);
@@ -598,6 +611,14 @@ style_height = getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
 style_width = getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);//scale the canvas
 canvas.setAttribute('height', style_height * dpi);
 canvas.setAttribute('width', style_width * dpi);}
+
+// Standard Normal variate using Box-Muller transform.
+function randn() {
+    var u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+}
 
 function get_dists(position){
 dist = Math.min(Math.abs(position[0]),Math.abs(position[1]))*(2*(position[0]*position[1]>0)-1)
@@ -617,10 +638,20 @@ var g = 0;
 var count = 0;
 var avoids = [];
 var sum;
-var avg
+var avg;
 var round = [];
+var cWinner;
 function draw() {
 	if (totTime[numVehicles-1]/dt > timepointsBeforeEvolution) {
+
+
+		for (i = 0; i < numVehicles; i++) {
+			histaList.add(vehicleList[i].a);
+			histbList.add(vehicleList[i].b);
+			histwIList.add(vehicleList[i].wI);
+			histwCList.add(vehicleList[i].wC);
+		}
+
 		count=0;
 		g+=1;
 		//get winner parameters
@@ -686,13 +717,17 @@ function draw() {
 			}else{
 			//mutation
 			randVal = Math.random();
+			randa = randn();
+			randb = randn();
 			if (randVal<(1./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner.a+Math.random()-0.5)>0.01 ? (winner.a+Math.random()-0.5) : winner.a,b:(winner.b+(Math.random()-0.5)*.1)>0.01 ? (winner.b+(Math.random()-0.5)*.1): winner.b ,wI:winner.wI+3*(Math.random()-0.5),wC:winner.wC+3*(Math.random()-0.5),color:colors[i],x:center+10*Math.random(),y:center+10*Math.random()},vehicle));
+				cWinner = winner;
 			} else if (randVal>(2./3.)){
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner2.a+Math.random()-0.5)>0.01 ? (winner2.a+Math.random()-0.5) : winner2.a,b:(winner2.b+(Math.random()-0.5)*.1)>0.01 ? (winner2.b+(Math.random()-0.5)*.1): winner2.b ,wI:winner2.wI+3*(Math.random()-0.5),wC:winner2.wC+3*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+				cWinner = winner2;
 			} else {
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(winner3.a+Math.random()-0.5)>0.01 ? (winner3.a+Math.random()-0.5) : winner3.a,b:(winner3.b+(Math.random()-0.5)*.1)>0.01 ? (winner3.b+(Math.random()-0.5)*.1): winner3.b,wI:winner3.wI+3*(Math.random()-0.5),wC:winner3.wC+3*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+				cWinner = winner3;
 			}
+
+				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(cWinner.a+randa)>0.01 ? (cWinner.a+randa) : cWinner.a,b:(cWinner.b+randb*.1)>0.01 ? cWinner.b+randb: cWinner.b,wI:winner2.wI+3*randn(),wC:winner2.wC+3*randn(),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			}
 			//also reinitialize readout arrays
 			avoid_array.push([]);
@@ -778,9 +813,7 @@ function draw() {
 				// console.log(xp,yp,hx,hy)
 				ang2 = (Math.atan2(yp-center,xp-center))%(2*Math.PI)
 				ang1 = (Math.atan2(vy,vx))%(2*Math.PI)
-				//this is wrong.
-				// l0 =Math.min(ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI)
-
+	
 
 				l00 = [Math.abs(ang1-ang2),Math.abs(ang1-ang2-2*Math.PI),Math.abs(ang1-ang2+2*Math.PI)]
 				l01 = [ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI]
@@ -855,7 +888,7 @@ function draw() {
 			// make avoidance plot. 
 			hotTime[i]= parseFloat(hotTime[i])+ parseFloat(hot)
 			totTime[i]  = parseFloat(totTime[i]) + dt
-			if ((count % 5)==1){
+			if ((count % 4)==1){
 			avoid_array[i] = avoid_array[i].concat(1. - 2.*(hotTime[i] / totTime[i]))
 			time_array[i] = time_array[i].concat(totTime[i]);
 			}
@@ -865,7 +898,7 @@ function draw() {
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
 		}
-		if ((count % 3)==1){
+		if ((count % 4)==1){
 		Plotly.update('tester', {y:avoid_array,x:time_array}, ints)
 		}
 		if(firstTime){
