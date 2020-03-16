@@ -161,16 +161,6 @@ body {
 		}
 	</style>
  </head>
-<!--  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script> -->
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
-</script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript" src="splines.js"></script>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
  <body>
  <div id='bigDiv'>
 <div id='gridCont' class="grid-container" margin='auto'>
@@ -246,6 +236,13 @@ Studying the AI in flies allows us to quantify the effect of some permutation (e
 </div>
 <!-- 
  -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="splines.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+ <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 
 <script type="text/javascript">
 
@@ -868,7 +865,7 @@ function draw() {
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
 		}
-		if ((count % 2)==1){
+		if ((count % 3)==1){
 		Plotly.update('tester', {y:avoid_array,x:time_array}, ints)
 		}
 		if(firstTime){
