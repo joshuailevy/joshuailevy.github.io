@@ -1,7 +1,22 @@
 <!DOCTYPE html>
+
+<meta charset="utf-8"/>
 <html>
  <head>
 <style>
+
+body {
+    box-sizing: border-box;
+    margin: 20px;
+/*    width:100%;
+    height: 100vh;*/
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 
 	#Qs{
 	color:#000000;
@@ -48,16 +63,42 @@
 		#gridCont{
 			text-align:center;
 			display: grid;
-			grid-template-columns:660px 400px 600px;
+			grid-template-columns:650px 400px 600px;
 			grid-column-gap:60px;
 			grid-template-rows:120px 800px 100px;
 			align-items:center;
 
 		}
+
+
+		#gridContInfo{
+		text-align:center;
+		display: grid;
+		grid-template-columns:550px 550px 550px;
+		grid-column-gap:75px;
+		grid-template-rows:900px;
+		align-items:center;
+		}
 		#lastBin{
+				  border: 1px solid rgba(0, 0, 0, 0.8);
+	  padding: 20px;
 		   grid-row-start: 3;
 		  grid-row-end: 4;
 		grid-column-start: 1;
+		  grid-column-end: 4;
+		}
+		#infoc1{
+		  border: 1px solid rgba(0, 0, 0, 0.8);
+		  padding: 20px;
+			grid-column-start: 1;
+		  grid-column-end: 2;
+		}
+		#infoc2{
+		  grid-column-start: 2;
+		  grid-column-end: 3;
+		}
+		#infoc3{
+		  grid-column-start: 3;
 		  grid-column-end: 4;
 		}
 		#container{
@@ -111,14 +152,6 @@
 		    margin-right: auto;
 		}
 
-		.box {
-		/*background-color: #FFFFFF;*/
-		/*color: #FFFFFF;*/
-		border:5px solid grey;
-		/*padding: 20px;*/
-		/*font-size: 150%;*/
-		}
-
 		.button0:hover{
 		  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 		}
@@ -128,17 +161,28 @@
 		}
 	</style>
  </head>
+<!--  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script> -->
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="splines.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
  <body>
  <div id='bigDiv'>
 <div id='gridCont' class="grid-container" margin='auto'>
 <h1 id='title' align="center">
 	Braitenberg Vehicle Evolution!
+	<hr>
 </h1>
-<div class='box' id="container" align="center">
+<div  id="container" align="center">
 <h2> Simulation of each generation </h2>
 <div id="canvasDiv">
 
-<canvas id="canvas1" width="600" height="600"></canvas>
+<canvas id="canvas1"></canvas>
 <div id="paramList" align="center">
 	<button class='button0' id='startBtn' >Start</button>
 	<button class='button0' id='stopBtn'>Stop</button>
@@ -147,43 +191,62 @@
 </div>
 
 
-<div  class='box' id="container2" align="center" flex-direction="column">
-<h2> Parameters of Current Generation </h2>
+<div  id="container2" align="center" flex-direction="column">
+<h2> Sensor Parameters </h2>
 <div id="tester2" ></div>
+<h2> Connectivity Parameters </h2>
+
 <div id="tester3" ></div>
 </div>
 
-<div  class='box' id="container3" align="center">
-<h2> A simple objective: how well does the vehicle avoid heat?</h2>
-<div id="tester" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
-<div id="tester4" style="width:canvas.width*0.3;height:canvas.width*0.15;"></div>
+<div  id="container3" align="center">
+<h2> How well does the vehicle avoid heat?</h2>
+<div id="tester"></div>
+<div id="tester4" ></div>
 </div>
-<br style = “line-height:500px;”>
-<h2 id='lastBin' align='center'> See below for more information!</h3>
+<!-- <br style = “line-height:500px;”> -->
+<h2 id='lastBin' align='center'> See below for more information</h2>
+</div>
+<div id='gridContInfo' class="grid-container">
+<div id="infoc1">
+<h2> Approximating a fly with a simple vehicle </h2>
+<img src="fly_vehicle.svg" alt="Approximating a fly">
+</div>
+<div id="infoc2">
+<h2> Evolutionary Optimization FAQs </h2>
+<p id="Qs" align='left'>
+<b> What are the model parameters?</b> <br>
+We describe our sensory response, h, as a function of the temperature above baseline, s, at the height of the sensor (e.g. a fly's antenna). \[ h(s) = e^{(-a\times s+b)}.\] Rather than a true readout of temperature, s is effected by time correlated noise, \( \epsilon(t) \), simulated by an <a href=" 
+https://en.wikipedia.org/wiki/Ornstein%E2%80%93Uhlenbeck_process"> Ornstein-Uhlenbeck </a> process. The processed input is linearly combined (using the Ipsilateral and Contralateral weights) to get the wheel speed, for example, 
+\[ v_L = h(s_L) w_I + h(s_R) w_C + v_0 + \gamma (t), \]
+where \(v_0\) is the baseline walking speed and \(\gamma (t)\) is time correlated noise. 
+<br>
+<b> How do we evolve the population? </b> <br>
+After each generation, we take the strongest performers (here, we take the top 3) and allow them to continue to the next generation. The rest of the next generation is then composed of mutations (i.e. random perturbations to the parameters of the winners) or crossovers (i.e. random mixtures of the parameters of each of the winners).
+</p>
+</div>
+
+<div id="infoc3">
+<h2> Sensory Navigation FAQs </h2>
+
+<p id="Qs" align='left'>
+<b>What is the avoidance index (AI)? </b><br>
+It's a measurement of thermal preference over time. An AI score of 1 signifies perfect avoidance of the heat stimulus (pink side), while -1 shows perfect attraction to the heat stimulus. If there is no preference, we expect to see an AI score of approximately 0.<br><br>
+<b> What can we learn from it? </b> <br>
+Studying the AI in flies allows us to quantify the effect of some permutation (e.g. a mutation) on thermal preference. Similar to a fly, evolution can allow the Braitenberg vehicle to refine its sensory and motor parameters to effectively avoid dangerous stimuli. 
+</p>
 </div>
 <hr>
-<p id="Qs" align='left'>
-What are the model parameters?<br>
-----<br>
-How do we evolve the population? <br>
----<br>
-What is a Pareto front? <br>
----<br><br>
-
-</p>
+</div>
 <hr>
 <p align='right'>
 © Joshua I. Levy 2020
 </p>
+
 </div>
 <!-- 
  -->
 
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript" src="splines.js"></script>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script type="text/javascript">
 
 var canvas = document.getElementById('canvas1');
@@ -195,11 +258,13 @@ var sliderSpeed = document.getElementById("slideSpeed");
 
 fix_dpi()
 
-var cg2 = document.getElementById('container3')
-canvas.width = Math.max(cg2.clientWidth,cg2.clientHeight);
-canvas.height = Math.max(cg2.clientWidth,cg2.clientHeight);
+var cg3 = document.getElementById('container3')
+var cg2 = document.getElementById('container2')
+var cg1 = document.getElementById('container')
+canvas.width = Math.max(cg3.clientWidth,cg3.clientHeight);
+canvas.height = Math.max(cg3.clientWidth,cg3.clientHeight);
 console.log(canvas.width,canvas.height)
-
+cg1.clientHeight = cg3.clientHeight;
 var ctx = canvas.getContext('2d');
 ////
 ctx.beginPath();
@@ -292,10 +357,49 @@ var layout = {
   },
 };
 
+var layout0 = {
+	height:350,
+	width:500,
+	// title:{
+	// 	text: "Generation 0",
+	// 	font: {
+ //        size: 18,
+ //        color: '#7f7f7f'
+ //      },
+  // },
+  xaxis: {
+    title: {
+      text: 'Time',
+      font: {
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    // range: [0,timepointsBeforeEvolution*dt]
+  },
+  yaxis: {
+    title: {
+      text: 'Avoidance Index',
+      font: {
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    range: [-1.1, 1.1]
+},
+  margin: {
+    l: 50,
+    r: 10,
+    b: 40,
+    t: 40,
+    pad: 2
+  },
+};
+
 
 var layout2 = {
-width:350,
-height:350,
+width:300,
+height:300,
 
   xaxis: {
     showgrid: true,
@@ -329,8 +433,8 @@ height:350,
 };
 
 var layout3 = {
-	width:350,
-	height:350,
+	width:300,
+	height:300,
   xaxis: {
     showgrid: true,
     title: {
@@ -366,7 +470,7 @@ var layout4 = {
 	height:350,
 	width:500,
 	title:{
-		text: "Avoidance Index across Generations",
+		text: "Avoidance Index Evolution",
 		font: {
         size: 18,
         color: '#7f7f7f'
@@ -612,10 +716,10 @@ function draw() {
 			wCList.push(vehicleList[i].wC);
 		}
 
-	console.log(aList,bList,wIList,wCList)
+	// console.log(aList,bList,wIList,wCList)
 		firstTime = 1;
 	}
-	if((count % 1)==0){
+	if((count % 3)==0){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	// adding the "hot" quadrants
