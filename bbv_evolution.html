@@ -379,9 +379,10 @@ $.ajax({
 	},
 });
 
-var t1 = data1['temp40']
-var x1 = data1['xcoord']
-var dt = 1./30.
+var t1 = data1['temp40'];
+var x1 = data1['xcoord'];
+var dt = 1./30.;
+var sqrtdt = Math.sqrt(dt);
 var avoid_array = [];
 var time_array = [];
 var timepointsBeforeEvolution = 1200;
@@ -450,7 +451,7 @@ height:275,
         color: '#7f7f7f'
       }
     },
-    range: [0,2.0]
+    range: [0,1.1]
 },
   margin: {
     l: 50,
@@ -602,9 +603,11 @@ var vehicleList = [];
 var ints = []
 var hotTime = [];
 var totTime = [];
+var r1 = [];
+
 for (i = 0; i < numVehicles; i++) {
-	randVal = Math.random;
-	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:10.*Math.random(),b:1.975*Math.random()+0.025,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+	// randVal = Math.random;
+	vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:10.*Math.random(),b:.975*Math.random()+0.025,wI:40*(Math.random()-0.5),wC:40*(Math.random()-0.5),color:colors[i],x:center+100*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 	avoid_array.push([])
 	ints.push(i)
 	hotTime.push([0.])
@@ -626,7 +629,9 @@ for (i = 0; i < numVehicles; i++) {
 	bList.push(vehicleList[i].b);
 	wIList.push(vehicleList[i].wI);
 	wCList.push(vehicleList[i].wC);
+	r1.push(euler_maru());
 }
+
 var firstTime = 1;
 
 function fix_dpi() {
@@ -669,6 +674,20 @@ function quickselect(arr, k) {
 }
 
 
+function euler_maru(){
+	sigma1 = 0.1;
+	tConst1 = 0.1;
+	noise = []; 
+	noise.length = timepointsBeforeEvolution;
+	noise[0] =0;
+	sigma1 = Math.sqrt(2./tConst1)*sigma1*sqrtdt;
+	for(p1 = 1; p1 < timepointsBeforeEvolution; p1++){
+		noise[p1] = noise[p1-1]-noise[p1-1]/tConst1*dt + sigma1*randn();
+	}
+	// console.log(noise);
+	return noise
+}
+
 // Standard Normal variate using Box-Muller transform.
 function randn() {
     var u = 0, v = 0;
@@ -699,9 +718,9 @@ var sum;
 var avg;
 var round = [];
 var cWinner;
+
 function draw() {
 	if (totTime[numVehicles-1]/dt > timepointsBeforeEvolution) {
-
 
 		for (i = 0; i < numVehicles; i++) {
 			histaList.has(vehicleList[i].a)?true:histaList.add(vehicleList[i].a);
@@ -714,18 +733,20 @@ function draw() {
 		g+=1;
 		//get winner parameters
 		finalParams = [];
-
+		r1 =[];
 		//find median score. 
 		for (i = 0; i < numVehicles; i++) {
 		finalParams.push(avoid_array[i][avoid_array[i].length-1]);
 		// sum+=avoid_array[i][avoid_array[i].length-1];
+		//setup random noise
+		r1.push(euler_maru())
 		}
 		round.push(g-1)
 		avoids.push(quickselect_median(finalParams))
 
 		winnerInd = argMax(finalParams);
 		winner =Object.assign({},vehicleList[winnerInd])
-		winner.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner.x = center+100*(Math.floor(Math.random()*2)*2-1)
 		winner.y =center;
 		winner.angle = Math.random()*2*Math.PI;
 		winner.color = colors[0];
@@ -733,7 +754,7 @@ function draw() {
 		finalParams[winnerInd] = -100;
 		winner2Ind = argMax(finalParams);
 		winner2 =Object.assign({},vehicleList[winner2Ind])
-		winner2.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner2.x = center+100*(Math.floor(Math.random()*2)*2-1)
 		winner2.y =center;
 		winner2.angle = Math.random()*2*Math.PI;
 		winner2.color = colors[1];
@@ -742,7 +763,7 @@ function draw() {
 		finalParams[winner2Ind] = -100;
 		winner3Ind = argMax(finalParams);
 		winner3 =Object.assign({},vehicleList[winner3Ind])
-		winner3.x = center+80*(Math.floor(Math.random()*2)*2-1)
+		winner3.x = center+100*(Math.floor(Math.random()*2)*2-1)
 		winner3.y =center;
 		winner3.angle = Math.random()*2*Math.PI;
 		winner3.color = colors[2];
@@ -786,7 +807,7 @@ function draw() {
 			} else {
 				cWinner = winner3;
 			}
-				vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(cWinner.a+randa)>0.01 ? (cWinner.a+randa) : cWinner.a+Math.random()*0.1,b:(cWinner.b+randb)>0.01 ? cWinner.b+randb: cWinner.b+Math.random()*0.1,wI:Math.abs(cWinner.wI+randwI) <25.?cWinner.wI+randwI:cWinner.wI,wC:Math.abs(cWinner.wC+randwC)<25.?cWinner.wC+randwC:cWinner.wC,color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(cWinner.a+randa)>0.01 ? (cWinner.a+randa) : cWinner.a+Math.random()*0.1,b:(cWinner.b+randb)>0.01 ? cWinner.b+randb: cWinner.b+Math.random()*0.1,wI:Math.abs(cWinner.wI+randwI) <25.?cWinner.wI+randwI:cWinner.wI,wC:Math.abs(cWinner.wC+randwC)<25.?cWinner.wC+randwC:cWinner.wC,color:colors[i],x:center+80*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			}
 			//also reinitialize readout arrays
 			avoid_array.push([]);
@@ -846,6 +867,7 @@ function draw() {
 	if(drawing){
 		//try to update. if we go out of the region, perform reflection
 		for (i = 0; i < numVehicles; i++) {
+
 			//head positions
 			hx = vehicleList[i].x + vehicleList[i].width/2*Math.cos(vehicleList[i].angle-Math.PI/2);
 			hy =vehicleList[i].y + vehicleList[i].width/2*Math.sin(vehicleList[i].angle-Math.PI/2);
@@ -900,7 +922,7 @@ function draw() {
 			vL_L = vR_R = wI;
 			vL_R = vR_L = wC;
 			//baseline speed
-			v0 = 10./scaleFactor;//slideSpeed.value/scaleFactor;//slideSpeed.value;
+			v0 = 8./scaleFactor;//slideSpeed.value/scaleFactor;//slideSpeed.value;
 			vL_0 = vR_0 = v0;
 			//calculate distance of antennae from hot plate, use spline interpolant to calculate temperature
 
@@ -930,11 +952,11 @@ function draw() {
 			//calculate wheel speeds
 			sL = (1./(1.+Math.exp(-a*sL+b)));
 			sR = (1./(1.+Math.exp(-a*sR+b)));
-			vL = sL*vL_L + sR*vR_L + vL_0;
-			vR = sL*vL_R + sR*vR_R + vR_0;
-
-			dv  =  -0.5*(vL + vR);
-			dTheta = (vL-vR)/b;
+			
+			vL = sL*vL_L + sR*vR_L + vL_0+r1[i][count];
+			vR = sL*vL_R + sR*vR_R + vR_0-r1[i][count];
+			dvdt  =  -0.5*(vL + vR);
+			dThetadt = (vL-vR)/b;
 
 			// make avoidance plot. 
 			hotTime[i]= parseFloat(hotTime[i])+ parseFloat(hot)
@@ -943,11 +965,12 @@ function draw() {
 			avoid_array[i] = avoid_array[i].concat(1. - 2.*(hotTime[i] / totTime[i]))
 			time_array[i] = time_array[i].concat(totTime[i]);
 			}
-			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*1.5;
-			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dv/60. + (Math.random()-0.5)*1.5;
-			vehicleList[i].angle+= dTheta/60.;//0.1*(Math.random()-0.5);
+			vehicleList[i].x += Math.cos(vehicleList[i].angle+Math.PI/2)*dvdt*dt;
+			vehicleList[i].y += Math.sin(vehicleList[i].angle+Math.PI/2)*dvdt*dt;
+			vehicleList[i].angle+= dThetadt*dt;//0.1*(Math.random()-0.5);
 			vehicleList[i].angle%= (Math.PI*2);
 			vehicleList[i].angle =  vehicleList[i].angle>0 ? vehicleList[i].angle : 2*Math.PI-vehicleList[i].angle;
+			
 		}
 		if ((count % 4)==1){
 		Plotly.update('tester', {y:avoid_array,x:time_array}, ints)
