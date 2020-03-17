@@ -17,8 +17,14 @@ body {
 }
 
 #disclaimer{
+	align-self: start;
   border: 1px solid red;
   color: red;
+	grid-row-start: 1;
+	grid-row-end: 2;
+	grid-column-start: 3;
+  grid-column-end: 4;
+
 }
 
 	.Qs{
@@ -42,6 +48,8 @@ body {
 		grid-column-start: 1;
 		  grid-column-end: 4;
 		}
+
+
 
 
 		#canvas1{
@@ -68,7 +76,7 @@ body {
 			display: grid;
 			grid-template-columns:650px 450px 650px;
 			grid-column-gap:60px;
-			grid-template-rows:120px 850px 100px;
+			grid-template-rows:250px 850px 100px;
 			align-items:center;
 
 		}
@@ -206,10 +214,12 @@ body {
  <body>
  <div id='bigDiv'>
 <div id='gridCont' class="grid-container" margin='auto'>
+
 <h1 id='title' align="center">
-	Braitenberg Vehicle Evolution!
+	Braitenberg Vehicle Evolution! 
 	<hr>
 </h1>
+<p id = "disclaimer"> GENERAL DISCLAIMER: While meant to illustrate the evolutionary algorithm used in our work, this webpage is a simplified version of the problem concerned with a single single objective (Avoidance Index). </p>
 <div  id="container" align="center">
 <h2> Simulation of each generation </h2>
 <div id="canvasDiv">
@@ -243,40 +253,33 @@ body {
 </div>
 <div id='gridContInfo' class="grid-container">
 <div id="infoc1">
-<h2> Approximating a fly with a simple vehicle </h2>
+<h2> Braitenberg vehicle </h2>
 <img src="fly_vehicle.svg" alt="Approximating a fly">
-
-<p class="Qs" align='left'>
-<b>Why is this a good model of fly thermotaxis? </b><br>
-When distilled down to fundamentals, sensory navigation describes the process in which a (noisy) signal drives motor system responses, in accordance with the intrisic tuning and wiring process of the reciever. This model formulation, an adaptation of the original model proposed by the cyberneticist Valentino Braitenberg, distills these concepts to their most basic, providing an intuitive interpretation of neuronal circuitry and their behavioral consequences. 
-</p>
-
 </div>
 <div id="infoc2">
-<h2> Evolutionary Optimization FAQs </h2>
+<h2> Vehicle Parameters </h2>
 <p class="Qs" align='left'>
-<b> What are the model parameters?</b> <br>
-We describe a nonlinear (logistic) sensory response, h, as a function of the temperature above baseline, s, at the height of the sensor (e.g. a fly's antenna). \[ h(s) = \frac{1}{1+e^{(-a\times s+b)}} .\] Rather than a true readout of temperature, s is effected by time correlated noise, \( \epsilon(t) \), simulated by an <a href=" 
+todo-We describe a nonlinear (logistic) sensory response, h, as a function of the temperature above baseline, s, at the height of the sensor (e.g. a fly's antenna). \[ h(s) = \frac{1}{1+e^{(-a\times s+b)}} .\] Rather than a true readout of temperature, s is effected by time correlated noise, \( \epsilon(t) \), simulated by an <a href=" 
 https://en.wikipedia.org/wiki/Ornstein%E2%80%93Uhlenbeck_process"> Ornstein-Uhlenbeck </a> process. The processed input is linearly combined (using the Ipsilateral and Contralateral weights) to get the wheel speed, for example, 
 \[ v_L = h(s_L) w_I + h(s_R) w_C + v_0 + \gamma (t), \]
 where \(v_0\) is the baseline walking speed and \(\gamma (t)\) is time correlated noise. 
-<br>
-<br>
-<b> How do we evolve the population? </b> <br>
-After each generation, we take the strongest performers (here, we take the top 3) and allow them to continue to the next generation. The rest of the next generation is then composed of mutations (i.e. random perturbations to the parameters of the winners) or crossovers (i.e. random mixtures of the parameters of each of the winners).
 </p>
 </div>
 
 <div id="infoc3">
-<h2> Sensory Navigation FAQs </h2>
+<h2> Avoidance Index </h2>
 
 <p class="Qs" align='left'>
-<b>What is the avoidance index (AI)? </b><br>
-It's a measurement of thermal preference over time. An AI score of 1 signifies perfect avoidance of the heat stimulus (pink side), while -1 shows perfect attraction to the heat stimulus. If there is no preference, we expect to see an AI score of approximately 0.<br><br>
-<b> What can we learn from it? </b> <br>
-Studying the AI in flies allows us to quantify the effect of some permutation (e.g. a mutation) on thermal preference. Similar to a fly, evolution can allow the Braitenberg vehicle to refine its sensory and motor parameters to effectively avoid dangerous stimuli. 
+
+The avoidance index (AI) is a measurement of thermal preference over time. An AI score of 1 signifies perfect avoidance of the heat stimulus (pink side), while -1 shows perfect attraction to the heat stimulus. If there is no preference, we expect to see an AI score of approximately 0. Mathematically, we write this as 
+\[AI = \frac{\text{time at BT} – \text{time at TT}}{\text{total time}}\]
+<br>
 </p>
-<h2 id = "disclaimer"> GENERAL DISCLAIMER: While this webpage is meant to describe the evolutionary algorithm used in our work, it is a simplified problem concerned only with optimization of a single objective (Avoidance Index). </h2>
+
+<h2> How do we evolve the population? </h2> 
+<p class="Qs" align='left'>
+After each generation, we take the strongest performers (here, we take the top 3) and allow them to continue to the next generation. The rest of the next generation is then composed of mutations (i.e. random perturbations to the parameters of the winners) or crossovers (i.e. random mixtures of the parameters of each of the winners).
+</p>
 </div>
 <hr>
 </div>
@@ -447,7 +450,7 @@ var layout3 = {
   xaxis: {
     showgrid: true,
     title: {
-      text: 'Ipsi. Weight',
+      text: 'Ipsilateral Weight (wI)',
       font: {
         size: 18,
         color: '#7f7f7f'
@@ -458,7 +461,7 @@ var layout3 = {
   yaxis: {
     showgrid: true,
     title: {
-      text: 'Contra. Weight',
+      text: 'Contralateral Weight (wC)',
       font: {
         size: 18,
         color: '#7f7f7f'
@@ -646,10 +649,10 @@ function draw() {
 
 
 		for (i = 0; i < numVehicles; i++) {
-			histaList.add(vehicleList[i].a);
-			histbList.add(vehicleList[i].b);
-			histwIList.add(vehicleList[i].wI);
-			histwCList.add(vehicleList[i].wC);
+			histaList.has(vehicleList[i].a)?true:histaList.add(vehicleList[i].a);
+			histbList.has(vehicleList[i].b)?true:histbList.add(vehicleList[i].b);
+			histwIList.has(vehicleList[i].wI)?true:histwIList.add(vehicleList[i].wI);
+			histwCList.has(vehicleList[i].wC)?true:histwCList.add(vehicleList[i].wC);
 		}
 
 		count=0;
