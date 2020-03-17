@@ -788,7 +788,7 @@ MmBkGMSAcTAEEq0BvSOBcbgF4GAIbMaRFpD0CGDGkRyQtApkxtGApH7gMo4GJPUDmBEUcMiKRwOS
 </g>
 <rect x="103.82" y="65.06" class="st7" width="31.66" height="42.45"/>
 <text transform="matrix(0.9259 0 0 1 108.9092 80.6553)"><tspan x="0" y="0" class="st9 st10 st11">h</tspan><tspan x="8.79" y="0" class="st9 st12 st13">(s)</tspan></text>
-<text transform="matrix(0.9259 0 0 1 113.5889 98.6514)"><tspan x="0" y="0" class="st14 st12 st13">+</tspan><tspan x="7.19" y="0" class="st14 st15 st16">e</tspan></text>
+<text transform="matrix(0.9259 0 0 1 113.5889 98.6514)"><tspan x="0" y="0" class="st14 st12 st13">+</tspan><tspan x="7.19" y="0" class="st14 st15 st16">&epsi</tspan></text>
 <g>
 	<rect x="106.43" y="128.55" class="st7" width="20.26" height="22.13"/>
 	<g>
@@ -801,6 +801,6 @@ MmBkGMSAcTAEEq0BvSOBcbgF4GAIbMaRFpD0CGDGkRyQtApkxtGApH7gMo4GJPUDmBEUcMiKRwOS
 	<text transform="matrix(0.9259 0 0 1 129.0166 129.7354)" class="st17 st19 st18">w</text>
 	<text transform="matrix(0.5398 0 0 0.583 138.9595 134.5942)" class="st17 st12 st18">C</text>
 </g>
-<text transform="matrix(0.9259 0 0 1 110.1953 175.0586)"><tspan x="0" y="0" class="st20 st12 st13">+</tspan><tspan x="7.19" y="0" class="st20 st15 st16">g</tspan></text>
+<text transform="matrix(0.9259 0 0 1 110.1953 175.0586)"><tspan x="0" y="0" class="st20 st12 st13">+</tspan><tspan x="7.19" y="0" class="st20 st15 st16">&gamma</tspan></text>
 <rect x="156.97" y="157.03" class="st7" width="29.26" height="28.45"/>
 </svg>
