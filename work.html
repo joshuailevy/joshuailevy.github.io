@@ -1,61 +1,75 @@
 <!DOCTYPE html>
 <html>
+
+<style>
+
+    #gridContInfo{
+    justify-items: center;
+    text-align:center;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    /*grid-column-gap:60px;*/
+    grid-template-rows:80%;
+    align-items:center;
+    }
+    #infoc1{
+      align-self: start;
+      grid-column-start: 1;
+      grid-column-end: 2;
+      grid-row-start: 1;
+      grid-row-end: 2;
+    }
+    #infoc2{
+      align-self: start;
+      grid-column-start: 2;
+      grid-column-end: 3;
+    }
+</style>
 <head>
-  <title>Joshua Levy</title>
+  <title>Joshua I. Levy</title>
   <meta charset="utf-8"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
 <header class="container">
   <div class="row">
-<figure class = "col-sm-4">
+     <figure class = "col-sm-4">
      <img src="logo.png" width="100%" height="100%"/>
      </figure>
-    <nav class="col-sm-6 text-center">
-<p><a href="index.html">Home</a></p>
-      <p><a href="work.html"> Recent Work</a></p>
-      <p><a href="shortCV.html"> CV</a></p>
-      <p><a href="contact.html"> Contact </a></p>   
+    <nav class="col-sm-6">
+      <p><a href="index.html">Home</a></p>
+      <p><a href="work.html"> My Work</a></p>
+      <p><a href="genInterests.html">General Interests</a></p>
+      <!-- <p><a href="contact.html"> Contact </a></p> -->
 </nav>
-  </div>
+</div>
 <hr>
  </header>
-<section class="container">
-<p class="col-sm-6 text-center">
-My current research is chiefly focused on ... 
-<br>
-I have done research in ....  
-</p>
 
-</section>
+<div id='gridContInfo' class="grid-container" margin='auto'>
+<div id='infoc1'>
+<h3 align='center'> <i> Drosophila</i> thermotaxis </h2>
+<img style='height: 100%; width: 100%; object-fit: contain' src="fly_vehicle.svg" alt="Approximating a fly">
+</div>
+
+
+<div id='infoc2'>
+<h3 align='center'> Transcriptomic Methods for Circadian Dynamics </h2>
+ <video width="320" height="240" loop="loop" controls autoplay>
+  <source src="circadian_embedding.mp4" type="video/mp4">
+</video> 
+</div>
+</div>
+
+
 
 <div class="row">
-<p align="center">
-<script language="JavaScript 1.2" type="text/javascript">
-months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; 
-var d=new Date();
-var weekday=new Array(7);
-weekday[0]="Sunday";
-weekday[1]="Monday";
-weekday[2]="Tuesday";
-weekday[3]="Wednesday";
-weekday[4]="Thursday";
-weekday[5]="Friday";
-weekday[6]="Saturday";
-
-var d = new Date();
-(d.getFullYear());
-
-
-var theDate = new Date(document.lastModified); 
-theDate.setTime((theDate.getTime()+(60*60)) ) 
-with (theDate) { 
-document.write("Last Modified: "+weekday[getDay()]+' '+getDate()+' '+months[getMonth()]+' '+d.getFullYear()) 
-} 
-
-</script>
+<hr>
+<p style="font-size: 12px" align="right">
+© Joshua I. Levy 2020
 </p>
 </div>
 
