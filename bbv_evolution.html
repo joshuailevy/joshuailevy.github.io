@@ -383,7 +383,7 @@ var drawing = false;
 //read in temperature data
 $.ajax({
 	async:false,
-	url: 'http://joshuailevy.github.io/contour_dat30_40.txt',
+	url: 'https://joshuailevy.github.io/contour_dat30_40.txt',
 	success: function(data) {
 	data1 = JSON.parse(JSON.parse(data));
   	console.log('success reading in temp data');
