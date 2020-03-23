@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+ <head>
+<style>
+
+		#canvas1{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    /*float: left;*/
+    /*width: 800px;*/
+}
+		#container{
+			width:100%;
+			text-align:center;
+		}
+		#paramList{
+			vertical-align: top;
+	    padding: 20px;
+	    margin: 0 auto;
+			display:inline-block;
+		}
+
+		#canvasDiv{
+	    padding: 20px;
+	    margin: 0 auto;
+			display:inline-block;
+		}
+
+		#tester{
+		    margin-left: auto;
+		    margin-right: auto;
+			text-align:center;
+		}
+
+	</style>
+ </head>
+ <body>
+	<h2 align="center">
+	Braitenberg Vehicle Simulator!
+</h2>
+<div id="container" align="center">
+<div id="canvasDiv">
+<canvas id="canvas1" width="300" height="300"></canvas>
+</div>
+
+<div id="paramList">
+	<button id='startBtn' >Start</button><button id='stopBtn'>Stop</button>
+	<p> <b> Parameters: </b> </p>
+	<p> Ipsilateral Weight: </p>
+<input id="slideIpsi" type="range" min="-30" max="30" step="0.5" value="0">
+	<p> Contralateral Weight: </p>
+<input id="slideContra" type="range" min="-30" max="30" step="0.5" value="0">
+<p> Base Walking Speed: </p>
+<input id="slideSpeed" type="range" min="0" max="15" step="0.5" value="5">
+</div>
+</div>
+
+<div id="tester" style="width:600px;height:250px;"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="splines.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+
+var canvas = document.getElementById('canvas1');
+var sliderIpsi = document.getElementById("slideIpsi");
+var sliderContra = document.getElementById("slideContra");
+var sliderSpeed = document.getElementById("slideSpeed");
+
+fix_dpi()
+var ctx = canvas.getContext('2d');
+var raf;
+var data1;
+var center = canvas.width/2;
+var arenaWidth = 38;
+var scaleFactor = arenaWidth/canvas.width;
+var b = 0.75;
+var drawing = false;
+//read in temperature data
+$.ajax({
+	async:false,
+	url: 'http://joshuailevy.github.io/contour_dat30_40.txt',
+	success: function(data) {
+	data1 = JSON.parse(JSON.parse(data));
+  	console.log('success reading in temp data');
+	},
+});
+
+var t1 = data1['temp40']
+var x1 = data1['xcoord']
+var dt = 1.
+var hotTime = 0;
+var totTime = 0;
+var avoid_array = [];
+
+
+var layout = {
+  xaxis: {
+    title: {
+      text: 'Time',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+  },
+  yaxis: {
+    title: {
+      text: 'Avoidance Index',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    range: [-1, 1]
+}
+};
+Plotly.newPlot('tester', [{
+  mode: 'lines',
+  line: {color: '#80CAF6'}
+}],layout);
+
+
+// console.log(Math.max(...x1),Math.min(...x1))
+var temps  = Smooth(t1,{
+	method: 'linear',
+	scaleTo: [Math.min(...x1)*-1,Math.max(...x1)*-1],
+})
+// console.log(t1,x1)
+//create interpolant so we can calculate temperatures at the antennae. 
+
+
+var vehicle = {
+	v: -1,
+	width: canvas.width*0.02,//these should be scaled by the canvas size
+	height:canvas.width*0.04,
+	color: 'blue',
+	angle: Math.PI/4*0,
+	x: canvas.width/2,//centroid position
+	y: canvas.height/2,
+	draw: function() {
+
+		ctx.save()
+		ctx.beginPath();
+		ctx.fillStyle = 'black';
+		ctx.translate(this.x, this.y);
+		ctx.rotate(this.angle);
+		ctx.translate(-this.x, -this.y);
+		ctx.strokeRect(this.x-this.width/2, this.y-this.height/2, this.width,this.height);
+		ctx.closePath();
+		//wheels
+		ctx.beginPath();
+		ctx.fillStyle = 'black';
+		ctx.rect(this.x-.8*this.width, this.y+this.height*0.2, .3*this.width,.4*this.height);
+		ctx.rect(this.x+this.width/2, this.y+this.height*0.2, 0.3*this.width,.4*this.height);
+		ctx.fill();
+		ctx.closePath();
+		//sensors
+		ctx.beginPath();
+		ctx.fillStyle = 'red';
+		ctx.arc(this.x-.2*this.width,this.y-.6*this.height,2,0,2*Math.PI, true)
+		ctx.arc(this.x+this.width*0.2,this.y-.6*this.height,2,0,2*Math.PI, true)
+		ctx.fill();
+		ctx.closePath();
+
+		ctx.restore()
+
+		ctx.beginPath();
+		ctx.arc(canvas.width/2, canvas.height/2,canvas.height/2,0,2*Math.PI, true)
+		ctx.stroke()
+		ctx.closePath()
+		///for testing
+		// ctx.save()
+		// ctx.beginPath();
+
+		// ctx.fillStyle = 'blue';
+		// // placing using the rotated context
+		// //   console.log(this.angle)
+		// //   ctx.translate(this.x, this.y);
+		// //   ctx.rotate(this.angle);
+		// // ctx.translate(-this.x, -this.y);
+		// // placing using absolute coordinates
+		// //head pos
+		// // ctx.arc(this.x+this.height/2*Math.cos(this.angle-Math.PI/2),this.y+this.height/2*Math.sin(this.angle-Math.PI/2),2,0,2*Math.PI, true)
+		// // Rantenna
+		// ctx.arc(this.x+this.height/2*Math.cos(this.angle-Math.PI/2)+this.width*0.2*Math.cos(this.angle),this.y+this.height/2*Math.sin(this.angle-Math.PI/2)+this.width*0.2*Math.sin(this.angle),2,0,2*Math.PI, true)
+		// // Lantenna
+		// ctx.arc(this.x+this.height/2*Math.cos(this.angle-Math.PI/2)+this.width*0.2*Math.cos(this.angle-Math.PI),this.y+this.height/2*Math.sin(this.angle-Math.PI/2)+this.width*0.2*Math.sin(this.angle-Math.PI),2,0,2*Math.PI, true)
+
+
+		// ctx.fill();
+		// ctx.closePath();
+		// ctx.restore()
+		/////////// end of testing area
+		ctx.save()
+		ctx.beginPath();
+		// adding the "hot" quadrants
+		ctx.fillStyle = 'red';
+		ctx.globalAlpha = 0.2;
+		ctx.arc(canvas.width/2,canvas.width/2,canvas.width/2,3*Math.PI/2,Math.PI, true)
+		ctx.lineTo(canvas.width/2,canvas.width/2)
+		ctx.fill();
+		ctx.closePath();
+		ctx.beginPath();
+
+		ctx.fillStyle = 'red';
+		ctx.globalAlpha = 0.2;
+		ctx.arc(canvas.width/2,canvas.width/2,canvas.width/2,Math.PI/2,0, true)
+		ctx.lineTo(canvas.width/2,canvas.width/2)
+		ctx.fill();
+		ctx.closePath();
+		ctx.restore()
+	}
+};
+
+function fix_dpi() {
+//get DPI
+dpi = window.devicePixelRatio;//get canvas
+canvas = document.getElementById('canvas1');
+//get CSS height
+style_height = getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+style_width = getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);//scale the canvas
+canvas.setAttribute('height', style_height * dpi);
+canvas.setAttribute('width', style_width * dpi);}
+
+function get_dists(position){
+dist = Math.min(Math.abs(position[0]),Math.abs(position[1]))*(2*(position[0]*position[1]>0)-1)
+return dist
+}
+
+
+
+
+function draw() {
+
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	vehicle.draw();
+	if(drawing){
+		//try to update. if we go out of the region, perform reflection
+
+		//head positions
+		hx = vehicle.x + vehicle.width/2*Math.cos(vehicle.angle-Math.PI/2);
+		hy =vehicle.y + vehicle.width/2*Math.sin(vehicle.angle-Math.PI/2);
+
+		//// reflect method
+		if ((Math.pow(hx-canvas.height/2,2) +Math.pow(hy-canvas.height/2,2) ) > Math.pow(canvas.height*0.49,2)) {
+		// find intersection of body axis vector and circle
+		vx = Math.cos(vehicle.angle-Math.PI/2)
+		vy = Math.sin(vehicle.angle-Math.PI/2)
+		a = (Math.pow(vx,2)+Math.pow(vy,2))
+		b = 2.*((hx-center)*vx+(hy-center)*vy) 
+		c = (Math.pow(hx-center,2)+Math.pow(hy-center,2)) - Math.pow(canvas.width*0.49,2)
+		if (Math.pow(b,2) -4.*a*c <0){
+			vehicle.angle+= Math.PI;
+
+		} else{
+			// console.log("hi",a,b,c)
+			j1 = (-b +Math.sqrt(Math.pow(b,2) -4.*a*c))/(2.*a)
+			j2 = (-b -Math.sqrt(Math.pow(b,2) -4.*a*c))/(2.*a)
+			min1 = j1 < j2 ? j1 : j2
+			xp = hx + min1*vx
+			yp = hy + min1*vy
+			 // perform reflection
+			// console.log(xp,yp,hx,hy)
+			ang2 = (Math.atan2(yp-center,xp-center))%(2*Math.PI)
+			ang1 = (Math.atan2(vy,vx))%(2*Math.PI)
+
+			// l0 = Math.min(Math.abs(ang1-ang2),Math.abs(ang1-ang2-2*Math.PI),Math.abs(ang1-ang2+2*Math.PI))
+			l0 = ang1-ang2//Math.min(ang1-ang2,ang1-ang2-2*Math.PI,ang1-ang2+2*Math.PI)
+			vehicle.angle -= 2*Math.sign(l0)*(Math.PI/2.-Math.abs(l0))
+			vehicle.angle = vehicle.angle % (Math.PI*2)
+
+			//head positions
+			hx = vehicle.x + vehicle.width/2*Math.cos(vehicle.angle-Math.PI/2);
+			hy =vehicle.y + vehicle.width/2*Math.sin(vehicle.angle-Math.PI/2);
+
+		}
+
+
+
+		}
+
+		// following check for hitting the boundary, advance the vehicle in time. 
+		//parameters for 2 wheeled robot model
+		//nonlinearity
+		a = 5;
+		b= 0.5;
+		//ipsi/contra weights
+		wI = slideIpsi.value;
+		wC = slideContra.value;
+		vL_L = vR_R = wI;
+		vL_R = vR_L = wC;
+		//baseline speed
+		v0 = slideSpeed.value/scaleFactor;//slideSpeed.value;
+		vL_0 = vR_0 = v0;
+		//calculate distance of antennae from hot plate, use spline interpolant to calculate temperature
+
+		//antennae positions
+		// Lantenna
+
+		Lx = vehicle.x+vehicle.height/2*Math.cos(vehicle.angle-Math.PI/2)+vehicle.width*0.2*Math.cos(vehicle.angle);
+		Ly = vehicle.y+vehicle.height/2*Math.sin(vehicle.angle-Math.PI/2)+vehicle.width*0.2*Math.sin(vehicle.angle);
+		// Rantenna
+		Rx = vehicle.x+vehicle.height/2*Math.cos(vehicle.angle-Math.PI/2)+vehicle.width*0.2*Math.cos(vehicle.angle-Math.PI)
+		Ry = vehicle.y+vehicle.height/2*Math.sin(vehicle.angle-Math.PI/2)+vehicle.width*0.2*Math.sin(vehicle.angle-Math.PI)
+
+		// get distances, scale dimensions to that of the arena
+		dL = get_dists([Lx-center,Ly-center])*scaleFactor;
+		dR = get_dists([Rx-center,Ry-center])*scaleFactor;
+
+
+		// get head position. 
+		Hx = (Lx+Rx)/2. -center;
+		Hy = (Ly+Ry)/2. -center;
+		hot = get_dists([Hx,Hy])>0 ? dt : 0;
+
+		// console.log(temps(dL),temps(dR));
+		sL = (temps(dL) - 25.)/10.;//0.2;
+		sR =(temps(dR) - 25.)/10.;// 0.2;
+
+		//calculate wheel speeds
+		sL = (1./(1.+Math.exp(-a*sL+b)));
+		sR = (1./(1.+Math.exp(-a*sR+b)));
+		vL = sL*vL_L + sR*vR_L + vL_0;
+		vR = sL*vL_R + sR*vR_R + vR_0;
+
+		dv  =  -0.5*(vL + vR);
+		dTheta = (vL-vR)/b;
+
+		totTime += dt;
+		hotTime += hot;
+		// avoidance = 1. - 2.*(hotTime / totTime);
+		avoid_array = avoid_array.concat(1. - 2.*(hotTime / totTime))
+		console.log(avoid_array)
+		Plotly.update('tester', {y:[avoid_array]}, [0])
+
+		vehicle.x += Math.cos(vehicle.angle+Math.PI/2)*dv/60.;
+		vehicle.y += Math.sin(vehicle.angle+Math.PI/2)*dv/60.;
+		vehicle.angle+= dTheta/60.;//0.1*(Math.random()-0.5);
+		vehicle.angle%= (Math.PI*2);
+		vehicle.angle =  vehicle.angle>0 ? vehicle.angle : 2*Math.PI-vehicle.angle;
+		raf = window.requestAnimationFrame(draw);
+	}
+}
+
+document.getElementById("startBtn").addEventListener("click",function(e) {
+	raf = window.requestAnimationFrame(draw);
+	drawing=true;
+});
+
+document.getElementById("stopBtn").addEventListener("click",function(e) {
+	raf = window.cancelAnimationFrame(draw);
+	drawing = false;
+});
+
+// canvas.addEventListener('mouseover', function(e) {
+// 	raf = window.requestAnimationFrame(draw);
+// });
+
+// canvas.addEventListener('mouseout', function(e) {
+// 	window.cancelAnimationFrame(raf);
+// });
+// raf = window.requestAnimationFrame(draw);
+// vehicle.draw();
+
+
+
+// var slide4 = document.getElementById('slide4');
+
+// sliderDiv = document.getElementById("sliderAmount");
+// sliderDiv2 = document.getElementById("sliderAmount2");
+// sliderDiv3 = document.getElementById("sliderAmount3");
+// sliderDiv4 = document.getElementById("sliderAmount4");
+
+
+// slide.onchange = function() {
+//     sliderDiv.innerHTML = this.value;
+// }
+
+</script>
+</body>
+</html>
+
+
