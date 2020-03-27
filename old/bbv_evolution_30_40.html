@@ -945,7 +945,7 @@ function draw() {
 			} else {
 				cWinner = winner3;
 			}
-			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(cWinner.a+randa)>0.01 ? (cWinner.a+randa) : cWinner.a+Math.random()*0.1,b:(cWinner.b+randb)>0.01 ? cWinner.b+randb: cWinner.b+Math.random()*0.1,wI:Math.abs(cWinner.wI+randwI) <25.?cWinner.wI+randwI:cWinner.wI,wC:Math.abs(cWinner.wC+randwC)<25.?cWinner.wC+randwC:cWinner.wC,color:colors[i],x:center+100*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
+			vehicleList.push(Object.assign({angle: Math.random()*2*Math.PI,a:(cWinner.a+randa)>0.05 ? (cWinner.a+randa) : cWinner.a+Math.random()*0.1,b:(cWinner.b+randb)>0.1 ? cWinner.b+randb: cWinner.b+Math.random()*0.1,wI:Math.abs(cWinner.wI+randwI) <25.?cWinner.wI+randwI:cWinner.wI,wC:Math.abs(cWinner.wC+randwC)<25.?cWinner.wC+randwC:cWinner.wC,color:colors[i],x:center+100*(Math.floor(Math.random()*2)*2-1),y:center},vehicle));
 			}
 			//also reinitialize readout arrays
 			avoid_array.push([]);
